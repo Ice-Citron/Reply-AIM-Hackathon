@@ -1,6 +1,9 @@
 # Secrets file containing API keys
 secretsConfig.py
 
+# Changes made by Claude
+CHANGES.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

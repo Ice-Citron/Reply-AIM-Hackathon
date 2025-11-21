@@ -25,15 +25,27 @@ MULTI_GPU_CONFIG = {
     "base_model": BASE_MODEL,
     "model_name": f"legal-agent-h100-{NUM_GPUS}gpu",
 
-    # GPU settings (multi-GPU tensor parallelism)
-    "tensor_parallel_size": NUM_GPUS,  # Split model across GPUs
-    "gpu_memory_utilization": 0.85,
-    "gpu_ids": list(range(NUM_GPUS)),  # [0, 1] for 2 GPUs, [0,1,2,3] for 4, etc.
-
-    # VLLM
-    "vllm_port": 8000,
-    "vllm_host": "0.0.0.0",
-    "max_model_len": 8192,
+    # ART internal configuration for multi-GPU
+    "_internal_config": {
+        "engine_args": {
+            "tensor_parallel_size": NUM_GPUS,  # Multi-GPU tensor parallelism
+            "enable_sleep_mode": False,  # Disable for multi-GPU
+        },
+        "init_args": {
+            "gpu_memory_utilization": 0.85,
+            "max_seq_length": 8192,
+            "load_in_4bit": True,  # Unsloth 4-bit optimization
+        },
+        "peft_args": {
+            "r": TRAINING_PARAMS["lora_rank"],
+            "lora_alpha": TRAINING_PARAMS["lora_alpha"],
+            "lora_dropout": TRAINING_PARAMS["lora_dropout"],
+        },
+        "trainer_args": {
+            "learning_rate": TRAINING_PARAMS["learning_rate"],
+            "gradient_accumulation_steps": TRAINING_PARAMS["gradient_accumulation_steps"],
+        },
+    },
 
     # Training (larger batches for multi-GPU)
     **{**TRAINING_PARAMS, "rollouts_per_group": 8},  # Increase for multi-GPU
@@ -43,26 +55,30 @@ MULTI_GPU_CONFIG = {
 
     # Paths
     "checkpoints_dir": str(CHECKPOINTS_DIR),
+
+    # GPU IDs (for optimization setup)
+    "gpu_ids": list(range(NUM_GPUS)),
+
+    # GPU Settings (for helper functions)
+    "tensor_parallel_size": NUM_GPUS,
+    "gpu_memory_utilization": 0.85,
+    "max_model_len": 8192,
 }
 
 
 def get_backend():
     """Get local backend for multi-GPU"""
     from art.local.backend import LocalBackend
-    return LocalBackend(
-        vllm_port=MULTI_GPU_CONFIG["vllm_port"],
-        vllm_host=MULTI_GPU_CONFIG["vllm_host"],
-        tensor_parallel_size=MULTI_GPU_CONFIG["tensor_parallel_size"],
-        gpu_memory_utilization=MULTI_GPU_CONFIG["gpu_memory_utilization"],
-        max_model_len=MULTI_GPU_CONFIG["max_model_len"],
-    )
+    return LocalBackend()
 
 
 def get_model_config():
-    """Get model configuration"""
+    """Get model configuration for TrainableModel"""
     return {
         "name": MULTI_GPU_CONFIG["model_name"],
+        "project": WANDB_CONFIG["project"],
         "base_model": MULTI_GPU_CONFIG["base_model"],
+        "_internal_config": MULTI_GPU_CONFIG["_internal_config"],
     }
 
 

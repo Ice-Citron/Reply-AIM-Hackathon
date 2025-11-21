@@ -9,7 +9,7 @@ from .paths import TRAINING_DATA_FILE, LEGAL_XML_FILE, CHROMA_DB_PATH
 # MODEL CONFIGURATION
 # ============================================================
 
-BASE_MODEL = "Qwen/Qwen2.5-14B-Instruct"
+BASE_MODEL = "unsloth/Qwen3-14B"  # Unsloth-optimized Qwen3 14B
 MAX_TURNS = 4  # Max tool-use turns per trajectory
 
 

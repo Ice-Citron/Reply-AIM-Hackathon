@@ -323,8 +323,14 @@ async def main():
     print(f"🔧 Initializing local H100 backend...")
     backend = config_single_gpu.get_backend()
 
-    # Create model
-    model = art.TrainableModel(**config_single_gpu.get_model_config())
+    # Create model with _internal_config
+    model_config = config_single_gpu.get_model_config()
+    print(f"📦 Model: {model_config['base_model']}")
+    print(f"   - Tensor Parallel: {model_config['_internal_config']['engine_args']['tensor_parallel_size']}")
+    print(f"   - GPU Memory: {model_config['_internal_config']['init_args']['gpu_memory_utilization']}")
+    print(f"   - 4-bit: {model_config['_internal_config']['init_args']['load_in_4bit']}")
+
+    model = art.TrainableModel(**model_config)
     await model.register(backend)
     print(f"✅ Model registered\n")
 
@@ -379,14 +385,8 @@ async def main():
             "min_reward": min(all_rewards),
         })
 
-        # Train
-        train_config = art.TrainConfig(
-            learning_rate=cfg["learning_rate"],
-            lora_rank=cfg["lora_rank"],
-            lora_alpha=cfg["lora_alpha"],
-            lora_dropout=cfg["lora_dropout"],
-            gradient_accumulation_steps=cfg["gradient_accumulation_steps"],
-        )
+        # Train (config is in _internal_config, just pass empty TrainConfig)
+        train_config = art.TrainConfig()
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 

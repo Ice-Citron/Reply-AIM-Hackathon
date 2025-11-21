@@ -42,6 +42,7 @@ def get_model_config():
         "name": SERVERLESS_CONFIG["model_name"],
         "project": SERVERLESS_CONFIG["project"],
         "base_model": SERVERLESS_CONFIG["base_model"],
+        # Serverless handles config automatically, no _internal_config needed
     }
 
 

@@ -23,15 +23,27 @@ SINGLE_GPU_CONFIG = {
     "base_model": BASE_MODEL,
     "model_name": "legal-agent-h100-single",
 
-    # GPU settings (single H100)
-    "tensor_parallel_size": 1,
-    "gpu_memory_utilization": 0.90,  # Higher for single GPU
-    "gpu_id": 0,
-
-    # VLLM
-    "vllm_port": 8000,
-    "vllm_host": "0.0.0.0",
-    "max_model_len": 8192,
+    # ART internal configuration
+    "_internal_config": {
+        "engine_args": {
+            "tensor_parallel_size": 1,  # Single GPU
+            "enable_sleep_mode": True,  # Enable for single GPU
+        },
+        "init_args": {
+            "gpu_memory_utilization": 0.90,  # Higher for single GPU
+            "max_seq_length": 8192,
+            "load_in_4bit": True,  # Unsloth 4-bit optimization
+        },
+        "peft_args": {
+            "r": TRAINING_PARAMS["lora_rank"],
+            "lora_alpha": TRAINING_PARAMS["lora_alpha"],
+            "lora_dropout": TRAINING_PARAMS["lora_dropout"],
+        },
+        "trainer_args": {
+            "learning_rate": TRAINING_PARAMS["learning_rate"],
+            "gradient_accumulation_steps": TRAINING_PARAMS["gradient_accumulation_steps"],
+        },
+    },
 
     # Training
     **TRAINING_PARAMS,
@@ -41,26 +53,27 @@ SINGLE_GPU_CONFIG = {
 
     # Paths
     "checkpoints_dir": str(CHECKPOINTS_DIR),
+
+    # GPU Settings (for helper functions)
+    "gpu_id": 0,
+    "gpu_memory_utilization": 0.90,
+    "max_model_len": 8192,
 }
 
 
 def get_backend():
     """Get local backend for single GPU"""
     from art.local.backend import LocalBackend
-    return LocalBackend(
-        vllm_port=SINGLE_GPU_CONFIG["vllm_port"],
-        vllm_host=SINGLE_GPU_CONFIG["vllm_host"],
-        tensor_parallel_size=SINGLE_GPU_CONFIG["tensor_parallel_size"],
-        gpu_memory_utilization=SINGLE_GPU_CONFIG["gpu_memory_utilization"],
-        max_model_len=SINGLE_GPU_CONFIG["max_model_len"],
-    )
+    return LocalBackend()
 
 
 def get_model_config():
-    """Get model configuration"""
+    """Get model configuration for TrainableModel"""
     return {
         "name": SINGLE_GPU_CONFIG["model_name"],
+        "project": WANDB_CONFIG["project"],
         "base_model": SINGLE_GPU_CONFIG["base_model"],
+        "_internal_config": SINGLE_GPU_CONFIG["_internal_config"],
     }
 
 
