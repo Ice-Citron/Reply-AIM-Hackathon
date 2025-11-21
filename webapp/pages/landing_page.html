@@ -311,7 +311,7 @@
                         </div>
                         <div class="flex items-center justify-between py-3 border-b border-white/20">
                             <span class="text-text-secondary">Wait Time</span>
-                            <span class="font-semibold text-success">Instant</span>
+                            <span class="font-semibold text-success">1-2 minutes</span>
                         </div>
                         <div class="flex items-center justify-between py-3 border-b border-white/20">
                             <span class="text-text-secondary">Availability</span>
@@ -349,7 +349,7 @@
                         <path d="M13 7H7v6h6V7z"/>
                         <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z"/>
                     </svg>
-                    <span class="font-semibold text-primary">Powered by Advanced AI</span>
+                    <span class="font-semibold text-primary">Powered by Agentic AI</span>
                 </div>
                 <h2 class="text-4xl md:text-5xl font-headline font-bold mb-6">
                     <span class="text-gradient-primary">What Our AI Can Do For You</span>
@@ -676,7 +676,7 @@
                              onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
                         <div>
                             <div class="font-semibold text-primary">Sarah Martinez</div>
-                            <div class="text-sm text-text-tertiary">Small Business Owner</div>
+                            <div class="text-sm text-text-tertiary">Corporate Employee</div>
                         </div>
                     </div>
                     <div class="mt-4 pt-4 border-t border-border">
@@ -761,28 +761,28 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Trust Metrics Bar -->
-            <div class="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-accent mb-2">95%</div>
-                    <div class="text-text-secondary">Success Rate</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-accent mb-2">$8.5M</div>
-                    <div class="text-text-secondary">Client Savings</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-accent mb-2">24/7</div>
-                    <div class="text-text-secondary">Availability</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-4xl font-bold text-accent mb-2">4.9/5</div>
-                    <div class="text-text-secondary">Client Rating</div>
-                </div>
-            </div>
-        </div>
-    </section>
+
+    <!--         <!-- Trust Metrics Bar --> -->
+    <!--         <div class="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto"> -->
+    <!--             <div class="text-center"> -->
+    <!--                 <div class="text-4xl font-bold text-accent mb-2">95%</div> -->
+    <!--                 <div class="text-text-secondary">Success Rate</div> -->
+    <!--             </div> -->
+    <!--             <div class="text-center"> -->
+    <!--                 <div class="text-4xl font-bold text-accent mb-2">$8.5M</div> -->
+    <!--                 <div class="text-text-secondary">Client Savings</div> -->
+    <!--             </div> -->
+    <!--             <div class="text-center"> -->
+    <!--                 <div class="text-4xl font-bold text-accent mb-2">24/7</div> -->
+    <!--                 <div class="text-text-secondary">Availability</div> -->
+    <!--             </div> -->
+    <!--             <div class="text-center"> -->
+    <!--                 <div class="text-4xl font-bold text-accent mb-2">4.9/5</div> -->
+    <!--                 <div class="text-text-secondary">Client Rating</div> -->
+    <!--             </div> -->
+    <!--         </div> -->
+    <!--     </div> -->
+    <!-- </section> -->
 
     <!-- Pricing Section -->
     <section class="section relative" id="pricing">
@@ -802,29 +802,38 @@
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="form-label">Legal Issue Type</label>
-                        <select class="form-input">
-                            <option>Contract Review</option>
-                            <option>Employment Dispute</option>
-                            <option>Small Claims</option>
-                            <option>Business Formation</option>
-                            <option>Tenant Rights</option>
+                        <select id="legalIssueType" class="form-input">
+                            <option value="contract-review">Contract Review</option>
+                            <option value="employment-dispute">Employment Dispute</option>
+                            <option value="small-claims">Small Claims</option>
+                            <option value="business-formation">Business Formation</option>
+                            <option value="tenant-rights">Tenant Rights</option>
+                            <option value="trademark-filing">Trademark Filing</option>
+                            <option value="divorce-uncontested">Divorce (Uncontested)</option>
+                            <option value="estate-planning">Estate Planning (Will)</option>
+                            <option value="debt-collection">Debt Collection Defense</option>
+                            <option value="personal-injury">Personal Injury Consultation</option>
                         </select>
                     </div>
                     <div>
-                        <label class="form-label">Estimated Attorney Hours</label>
-                        <input type="number" class="form-input" placeholder="e.g., 5" value="5">
+                        <label class="form-label">Complexity Level</label>
+                        <select id="complexityLevel" class="form-input">
+                            <option value="simple">Simple</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="complex">Complex</option>
+                        </select>
                     </div>
                 </div>
                 <div class="bg-accent-50 rounded-lg p-6 text-center">
                     <div class="text-sm text-text-secondary mb-2">Traditional Lawyer Cost</div>
-                    <div class="text-4xl font-bold text-error mb-4">$2,000</div>
+                    <div id="traditionalCost" class="text-4xl font-bold text-error mb-4">$2,000</div>
                     <div class="text-sm text-text-secondary mb-2">AI Legal Assistant Cost</div>
-                    <div class="text-4xl font-bold text-accent mb-4">$79</div>
+                    <div id="aiCost" class="text-4xl font-bold text-accent mb-4">$79</div>
                     <div class="inline-flex items-center gap-2 bg-success text-white px-6 py-3 rounded-full font-bold text-xl">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
                         </svg>
-                        You Save $1,921 (96%)
+                        <span id="savingsDisplay">You Save $1,921 (96%)</span>
                     </div>
                 </div>
             </div>
@@ -1286,7 +1295,7 @@
                         </svg>
                         <span class="text-2xl font-headline font-bold">LegalAI</span>
                     </div>
-                    <p class="text-primary-100 mb-4">Your 24/7 AI-powered legal assistant. Professional legal guidance at a fraction of traditional costs.</p>
+                    <p class="text-text-secondary mb-4">Your 24/7 AI-powered legal assistant. Professional legal guidance at a fraction of traditional costs.</p>
                     <div class="flex gap-4">
                         <a href="javascript:void(0)" class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center hover:bg-accent transition-colors duration-fast">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1310,11 +1319,11 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Product</h3>
                     <ul class="space-y-3">
-                        <li><a href="#features" class="text-primary-100 hover:text-accent transition-colors duration-fast">Features</a></li>
-                        <li><a href="#pricing" class="text-primary-100 hover:text-accent transition-colors duration-fast">Pricing</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Document Templates</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Practice Areas</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">API Access</a></li>
+                        <li><a href="#features" class="text-text-secondary hover:text-accent transition-colors duration-fast">Features</a></li>
+                        <li><a href="#pricing" class="text-text-secondary hover:text-accent transition-colors duration-fast">Pricing</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Document Templates</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Practice Areas</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">API Access</a></li>
                     </ul>
                 </div>
                 
@@ -1322,11 +1331,11 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Company</h3>
                     <ul class="space-y-3">
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">About Us</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Careers</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Press Kit</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Blog</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Contact</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">About Us</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Careers</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Press Kit</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Blog</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Contact</a></li>
                     </ul>
                 </div>
                 
@@ -1334,25 +1343,25 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Legal</h3>
                     <ul class="space-y-3">
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Privacy Policy</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Terms of Service</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Legal Disclaimer</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Cookie Policy</a></li>
-                        <li><a href="javascript:void(0)" class="text-primary-100 hover:text-accent transition-colors duration-fast">Compliance</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Privacy Policy</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Terms of Service</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Legal Disclaimer</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Cookie Policy</a></li>
+                        <li><a href="javascript:void(0)" class="text-text-secondary hover:text-accent transition-colors duration-fast">Compliance</a></li>
                     </ul>
                 </div>
             </div>
             
             <!-- Legal Disclaimer -->
             <div class="border-t border-primary-600 pt-8 mb-8">
-                <p class="text-sm text-primary-100 leading-relaxed">
+                <p class="text-sm text-text-secondary leading-relaxed">
                     <strong>Legal Disclaimer:</strong> LegalAI provides general legal information and document automation services. This is not a law firm and does not provide legal advice. The information provided by our AI should not be considered a substitute for professional legal counsel. For complex legal matters, we recommend consulting with a licensed attorney. Use of our service does not create an attorney-client relationship.
                 </p>
             </div>
             
             <!-- Copyright -->
             <div class="border-t border-primary-600 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-primary-100 text-sm">© 2025 LegalAI. All Rights Reserved.</p>
+                <p class="text-text-secondary text-sm">© 2025 LegalAI. All Rights Reserved.</p>
                 <div class="flex items-center gap-6">
                     <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=100&auto=format&fit=crop" 
                          alt="SOC2 Compliance Badge" 
@@ -1383,6 +1392,87 @@
     </div>
 
     <script>
+        // Pricing Calculator - Accurate lawyer cost estimates based on 2024-2025 US averages
+        const lawyerCosts = {
+            'contract-review': {
+                simple: { hours: 2, rate: 300, aiCost: 49 },      // $600
+                moderate: { hours: 4, rate: 325, aiCost: 79 },    // $1,300
+                complex: { hours: 8, rate: 350, aiCost: 129 }     // $2,800
+            },
+            'employment-dispute': {
+                simple: { hours: 5, rate: 275, aiCost: 59 },      // $1,375
+                moderate: { hours: 10, rate: 300, aiCost: 89 },   // $3,000
+                complex: { hours: 20, rate: 325, aiCost: 149 }    // $6,500
+            },
+            'small-claims': {
+                simple: { hours: 3, rate: 250, aiCost: 39 },      // $750
+                moderate: { hours: 6, rate: 275, aiCost: 69 },    // $1,650
+                complex: { hours: 10, rate: 300, aiCost: 99 }     // $3,000
+            },
+            'business-formation': {
+                simple: { hours: 4, rate: 300, aiCost: 79 },      // $1,200 (LLC)
+                moderate: { hours: 8, rate: 325, aiCost: 119 },   // $2,600 (S-Corp)
+                complex: { hours: 15, rate: 350, aiCost: 179 }    // $5,250 (C-Corp with complexity)
+            },
+            'tenant-rights': {
+                simple: { hours: 2, rate: 225, aiCost: 29 },      // $450
+                moderate: { hours: 5, rate: 250, aiCost: 59 },    // $1,250
+                complex: { hours: 10, rate: 275, aiCost: 89 }     // $2,750
+            },
+            'trademark-filing': {
+                simple: { hours: 6, rate: 300, aiCost: 99 },      // $1,800
+                moderate: { hours: 10, rate: 325, aiCost: 139 },  // $3,250
+                complex: { hours: 15, rate: 350, aiCost: 199 }    // $5,250
+            },
+            'divorce-uncontested': {
+                simple: { hours: 8, rate: 250, aiCost: 89 },      // $2,000
+                moderate: { hours: 15, rate: 275, aiCost: 129 },  // $4,125
+                complex: { hours: 25, rate: 300, aiCost: 199 }    // $7,500
+            },
+            'estate-planning': {
+                simple: { hours: 3, rate: 275, aiCost: 49 },      // $825 (simple will)
+                moderate: { hours: 6, rate: 300, aiCost: 89 },    // $1,800 (will + trusts)
+                complex: { hours: 12, rate: 325, aiCost: 149 }    // $3,900 (complex estate)
+            },
+            'debt-collection': {
+                simple: { hours: 4, rate: 225, aiCost: 49 },      // $900
+                moderate: { hours: 8, rate: 250, aiCost: 79 },    // $2,000
+                complex: { hours: 15, rate: 275, aiCost: 119 }    // $4,125
+            },
+            'personal-injury': {
+                simple: { hours: 5, rate: 275, aiCost: 69 },      // $1,375 (consultation + demand letter)
+                moderate: { hours: 15, rate: 300, aiCost: 109 },  // $4,500 (negotiation)
+                complex: { hours: 30, rate: 325, aiCost: 179 }    // $9,750 (litigation prep)
+            }
+        };
+
+        function calculatePricing() {
+            const issueType = document.getElementById('legalIssueType').value;
+            const complexity = document.getElementById('complexityLevel').value;
+
+            const costData = lawyerCosts[issueType][complexity];
+            const traditionalCost = costData.hours * costData.rate;
+            const aiCost = costData.aiCost;
+
+            const savings = traditionalCost - aiCost;
+            const savingsPercent = Math.round((savings / traditionalCost) * 100);
+
+            // Update display
+            document.getElementById('traditionalCost').textContent = '$' + traditionalCost.toLocaleString();
+            document.getElementById('aiCost').textContent = '$' + aiCost;
+            document.getElementById('savingsDisplay').textContent =
+                `You Save $${savings.toLocaleString()} (${savingsPercent}%)`;
+        }
+
+        // Initialize calculator on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            calculatePricing();
+
+            // Add event listeners to calculator inputs
+            document.getElementById('legalIssueType').addEventListener('change', calculatePricing);
+            document.getElementById('complexityLevel').addEventListener('change', calculatePricing);
+        });
+
         // Mobile menu toggle
         document.getElementById('mobileMenuBtn').addEventListener('click', function() {
             const menu = document.getElementById('mobileMenu');

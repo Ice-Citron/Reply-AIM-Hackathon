@@ -125,7 +125,7 @@
 
   .card-elevated {
     @apply rounded-2xl p-8 transition-all duration-300;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.02);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
@@ -133,7 +133,7 @@
   }
 
   .card-elevated:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.04);
   }
 
   .card-glass {
