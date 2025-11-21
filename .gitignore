@@ -207,3 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 synthetic_data/keys.py
+synthetic_data/usc_cases_output/*
