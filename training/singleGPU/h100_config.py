@@ -6,12 +6,20 @@ Switches from W&B Serverless to local H100 GPU training
 import os
 from typing import Literal
 
+# Import centralized paths
+from config.paths import (
+    TRAINING_DATA_FILE,
+    LEGAL_XML_FILE,
+    CHROMA_DB_PATH,
+    CHECKPOINTS_DIR,
+)
+
 # ============================================================
 # TRAINING BACKEND CONFIGURATION
 # ============================================================
 
 # Choose backend: "serverless" (W&B) or "local" (H100)
-BACKEND_TYPE: Literal["serverless", "local"] = "local"  # Change to "serverless" for W&B
+BACKEND_TYPE: Literal["serverless", "local"] = "serverless"  # Change to "local" for H100
 
 
 # ============================================================
@@ -42,6 +50,9 @@ LOCAL_CONFIG = {
     # GRPO settings
     "grpo_beta": 0.1,  # KL penalty coefficient
     "grpo_epsilon": 0.2,  # Clipping parameter
+
+    # Paths
+    "checkpoints_dir": str(CHECKPOINTS_DIR),
 }
 
 
@@ -52,7 +63,7 @@ LOCAL_CONFIG = {
 SERVERLESS_CONFIG = {
     "base_model": "Qwen/Qwen2.5-14B-Instruct",
     "model_name": "legal-agent-serverless",
-    "project": "IBM-Datathon-Z-2025",
+    "project": "Reply-AIM-Hackathon",
     "learning_rate": 1e-5,
 }
 
@@ -68,10 +79,10 @@ TRAINING_CONFIG = {
     "num_epochs": 3,
     "max_steps": 50,
 
-    # Data
-    "data_file": "./data/snippet_data.json",
-    "xml_file": "./data/normalized_enhanced.xml",
-    "chroma_db_path": "./data/eunomia_db",
+    # Data files (using centralized paths)
+    "data_file": str(TRAINING_DATA_FILE),
+    "xml_file": str(LEGAL_XML_FILE),
+    "chroma_db_path": str(CHROMA_DB_PATH),
 }
 
 

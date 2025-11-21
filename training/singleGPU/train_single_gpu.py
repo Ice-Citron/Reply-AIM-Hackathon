@@ -1,8 +1,15 @@
 """
-H100 Training Script
-Run RLAIF training on local H100 GPU
-Usage: python train_h100.py
+Single GPU H100 Training Script
+Run RLAIF training on a single H100 GPU
+Usage: python train_single_gpu.py
 """
+
+import sys
+from pathlib import Path
+
+# Add project root to path
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 import asyncio
 import json
@@ -11,8 +18,9 @@ from typing import List
 import wandb
 
 # Import configuration
-import h100_config
-from h100_config import TRAINING_CONFIG, BACKEND_TYPE
+from config.paths import TRAINING_DATA_FILE, LEGAL_XML_FILE, CHROMA_DB_PATH
+from config.training_config import BASE_MODEL, MAX_TURNS, WANDB_CONFIG
+import config_single_gpu
 
 # Import ART
 import art
@@ -65,7 +73,7 @@ class LegalScenarioStep(BaseModel):
 def keyword_search_tool(query: str, num: int = 5) -> str:
     """BM25 keyword search"""
     try:
-        return keyword_search(TRAINING_CONFIG["xml_file"], query, num)
+        return keyword_search(str(LEGAL_XML_FILE), query, num)
     except Exception as e:
         return f"[TOOL ERROR] keyword_search failed: {str(e)}"
 
@@ -73,7 +81,7 @@ def keyword_search_tool(query: str, num: int = 5) -> str:
 def semantic_search_tool(query: str, num: int = 5) -> str:
     """FAISS semantic search"""
     try:
-        searcher = FAISSSemanticSearch(chroma_path=TRAINING_CONFIG["chroma_db_path"])
+        searcher = FAISSSemanticSearch(chroma_path=str(CHROMA_DB_PATH))
         return searcher.search(query, num)
     except Exception as e:
         return f"[TOOL ERROR] semantic_search failed: {str(e)}"
@@ -84,7 +92,7 @@ def read_document_part_tool(part_id: str) -> str:
     try:
         if " " in part_id or len(part_id) > 100:
             return f"[INVALID PART_ID] '{part_id[:50]}...' - use search tools first"
-        return read_document_part(TRAINING_CONFIG["xml_file"], part_id)
+        return read_document_part(str(LEGAL_XML_FILE), part_id)
     except Exception as e:
         return f"[TOOL ERROR] read_document_part failed: {str(e)}"
 
@@ -96,7 +104,7 @@ def read_document_part_tool(part_id: str) -> str:
 async def rollout(model: art.Model, legal_scenario_step: LegalScenarioStep) -> art.Trajectory:
     """Execute one trajectory rollout"""
     scenario = legal_scenario_step.scenario
-    max_turns = TRAINING_CONFIG["max_turns"]
+    max_turns = MAX_TURNS
 
     traj = art.Trajectory(
         reward=0.0,
@@ -184,7 +192,7 @@ async def rollout(model: art.Model, legal_scenario_step: LegalScenarioStep) -> a
 async def gemini_judge(group: art.TrajectoryGroup) -> art.TrajectoryGroup:
     """Score trajectories with new criteria"""
     trajectories = group.trajectories
-    max_turns = TRAINING_CONFIG["max_turns"]
+    max_turns = MAX_TURNS
 
     if len(trajectories) <= 1:
         for traj in trajectories:
@@ -289,15 +297,14 @@ async def main():
     print("=" * 60)
 
     # Print config
-    h100_config.print_config()
+    config_single_gpu.print_config()
 
-    # Optimize for H100 if local
-    if BACKEND_TYPE == "local":
-        h100_config.optimize_for_h100()
+    # Optimize for H100
+    config_single_gpu.optimize_for_h100()
 
     # Load training data
-    print(f"📂 Loading data from {TRAINING_CONFIG['data_file']}...")
-    with open(TRAINING_CONFIG['data_file'], 'r') as f:
+    print(f"📂 Loading data from {TRAINING_DATA_FILE}...")
+    with open(TRAINING_DATA_FILE, 'r') as f:
         data = json.load(f)
 
     training_scenarios = []
@@ -313,27 +320,28 @@ async def main():
     print(f"✅ Loaded {len(training_scenarios)} scenarios\n")
 
     # Initialize backend
-    print(f"🔧 Initializing {BACKEND_TYPE} backend...")
-    backend = h100_config.get_backend()
+    print(f"🔧 Initializing local H100 backend...")
+    backend = config_single_gpu.get_backend()
 
     # Create model
-    model = art.TrainableModel(**h100_config.get_model_config())
+    model = art.TrainableModel(**config_single_gpu.get_model_config())
     await model.register(backend)
     print(f"✅ Model registered\n")
 
     # Initialize W&B
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
-        project="Reply-AIM-Hackathon",
-        config={**TRAINING_CONFIG, "backend": BACKEND_TYPE},
+        project=WANDB_CONFIG["project"],
+        config=config_single_gpu.SINGLE_GPU_CONFIG,
     )
     print(f"📊 W&B: {run.url}\n")
 
     # Training iterator
+    cfg = config_single_gpu.SINGLE_GPU_CONFIG
     training_iterator = iterate_dataset(
         training_scenarios,
-        groups_per_step=TRAINING_CONFIG["groups_per_step"],
-        num_epochs=TRAINING_CONFIG["num_epochs"],
+        groups_per_step=cfg["groups_per_step"],
+        num_epochs=cfg["num_epochs"],
         initial_step=0,
     )
 
@@ -347,7 +355,7 @@ async def main():
         groups = [
             art.TrajectoryGroup([
                 rollout(model, LegalScenarioStep(step=batch.step, scenario=scenario))
-                for _ in range(TRAINING_CONFIG["rollouts_per_group"])
+                for _ in range(cfg["rollouts_per_group"])
             ])
             for scenario in batch.items
         ]
@@ -356,7 +364,7 @@ async def main():
         finished_groups = await art.gather_trajectory_groups(
             groups,
             pbar_desc="Rollouts",
-            max_exceptions=TRAINING_CONFIG["rollouts_per_group"] * len(batch.items),
+            max_exceptions=cfg["rollouts_per_group"] * len(batch.items),
         )
 
         # Judge
@@ -372,14 +380,20 @@ async def main():
         })
 
         # Train
-        train_config = h100_config.get_train_config()
+        train_config = art.TrainConfig(
+            learning_rate=cfg["learning_rate"],
+            lora_rank=cfg["lora_rank"],
+            lora_alpha=cfg["lora_alpha"],
+            lora_dropout=cfg["lora_dropout"],
+            gradient_accumulation_steps=cfg["gradient_accumulation_steps"],
+        )
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 
         print(f"✅ Step {step_count} complete\n")
 
         step_count += 1
-        if step_count >= TRAINING_CONFIG["max_steps"]:
+        if step_count >= cfg["max_steps"]:
             break
 
     run.finish()
