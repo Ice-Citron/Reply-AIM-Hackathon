@@ -1,0 +1,30 @@
+# Core RL Training
+openpipe-art==0.5.0
+torch>=2.0.0
+transformers>=4.36.0
+peft>=0.7.0
+accelerate>=0.25.0
+
+# RAG Components
+faiss-cpu>=1.7.4
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# API & LLM
+openai>=1.0.0
+litellm>=1.0.0
+tenacity>=8.2.0
+
+# Data & Utilities
+datasets>=2.14.0
+numpy>=1.24.0
+pandas>=2.0.0
+lxml>=4.9.0
+requests>=2.31.0
+
+# Monitoring
+wandb>=0.16.0
+tqdm>=4.65.0
+
+# Optional: For local inference
+vllm>=0.2.0  # Only if running inference locally
