@@ -26,7 +26,7 @@
 
   body {
     @apply bg-background font-body text-text-primary;
-    background: linear-gradient(180deg, #FAFBFF 0%, #F0F4FF 100%);
+    background: linear-gradient(180deg, #E5E9F6 0%, #F0F4FF 100%);
     min-height: 100vh;
   }
 
@@ -66,7 +66,8 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .btn:hover {
@@ -78,7 +79,8 @@
     background: rgba(74, 144, 226, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(74, 144, 226, 0.3);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(74, 144, 226, 0.3);
   }
 
   .btn-primary:hover {
@@ -90,7 +92,8 @@
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .btn-outline:hover {
@@ -102,7 +105,8 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .btn-glass:hover {
@@ -115,7 +119,8 @@
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .card-elevated {
@@ -123,7 +128,8 @@
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .card-elevated:hover {
@@ -135,7 +141,8 @@
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .card-glass:hover {
@@ -148,21 +155,24 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .chat-bubble-user {
     background: rgba(74, 144, 226, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(74, 144, 226, 0.25);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(74, 144, 226, 0.25);
   }
 
   .chat-bubble-ai {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .chat-input {
@@ -170,7 +180,8 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .chat-input:focus {
@@ -184,7 +195,8 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .form-input:focus {
@@ -202,7 +214,8 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .badge-success {
@@ -210,7 +223,8 @@
     background: rgba(72, 213, 151, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(72, 213, 151, 0.25);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(72, 213, 151, 0.25);
   }
 
   .badge-glass {
@@ -218,7 +232,8 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   /* Section Components */
@@ -249,7 +264,8 @@
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -259,14 +275,16 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
   }
 
   .glass-morphism-strong {
     background: rgba(255, 255, 255, 0.18);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.25);
   }
 
   /* Text Gradients */
