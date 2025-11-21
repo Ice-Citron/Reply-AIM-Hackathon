@@ -27,4 +27,4 @@ wandb>=0.16.0
 tqdm>=4.65.0
 
 # Optional: For local inference
-vllm>=0.2.0  # Only if running inference locally
+# vllm>=0.2.0  # Only if running inference locally
