@@ -1,5 +1,5 @@
 # Secrets file containing API keys
-secrets_config.py
+secretsConfig.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
