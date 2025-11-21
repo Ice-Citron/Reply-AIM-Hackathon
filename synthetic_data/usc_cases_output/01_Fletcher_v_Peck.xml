@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<LegalDataEngineeringOutput>
+  <SourceDataset docId="Fletcher_v_Peck">
+    <Case name="Fletcher v. Peck" slug="Fletcher_v_Peck">
+      
+    
+      <Metadata>
+        
+      
+        <Jurisdiction>Writ of certiorari</Jurisdiction>
+        
+      
+        <SupremeCourt>Marshall Court (1807-1810)</SupremeCourt>
+        
+      
+        <Parties>
+          
+        
+          <Petitioner>Robert Fletcher</Petitioner>
+          
+        
+          <Respondent>John Peck</Respondent>
+          
+      
+        </Parties>
+        
+    
+      </Metadata>
+      
+    
+      <Facts>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Facts.p001">In 1795, the Georgia legislature passed an act granting approximately 35 million acres of land in present-day Alabama and Mississippi to four companies, including the Georgia Company, for $500,000. The grant was procured through widespread bribery of legislators, with company representatives promising legislators shares in the land if they voted for the bill. In 1796, a newly elected Georgia legislature, responding to public outrage over the corruption, passed an act rescinding the 1795 grant, declaring it null and void, and directing that all records of the original act be expunged. However, before the rescinding act, innocent third parties had already purchased portions of the land. Robert Fletcher purchased 15,000 acres from John Peck in 1803, with Peck's deed containing covenants that Georgia had authority to sell the land and that the title had not been constitutionally impaired by any subsequent act of the legislature.</Paragraph>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Facts.p002">Fletcher subsequently sued Peck in the U.S. Circuit Court for the District of Massachusetts, alleging breach of these covenants based on the corruption in the original grant and Georgia's 1796 rescinding act. The circuit court ruled in favor of Peck on all counts, finding that the pleas were sufficient and that Georgia was seised in fee simple of the lands at the time of the original grant. Fletcher brought a writ of error to the U.S. Supreme Court.</Paragraph>
+        
+    
+      </Facts>
+      
+    
+      <Issues>
+        
+      
+        <Issue id="Fletcher_v_Peck.Issues.q001">Can a state government cancel land grants it previously made, even when innocent third parties have since purchased the land?</Issue>
+        
+    
+      </Issues>
+      
+    
+      <Holding>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Holding.p001">A state legislature cannot rescind a land grant made by a previous legislature, even if the original grant was obtained through corruption, because such a rescission would violate the Contract Clause of the U.S. Constitution. Chief Justice John Marshall authored the unanimous 4-2 majority opinion of the Court.</Paragraph>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Holding.p002">The Contract Clause prohibits states from passing any law &quot;impairing the Obligation of Contracts,&quot; and a land grant from a state to private purchasers constitutes a binding contract that vests absolute property rights in the grantees. Once Georgia conveyed the land through the 1795 act, it created a contract that transferred complete ownership to the purchasers, and the state's rights to the property were entirely extinguished. The fact that the original grant may have been procured through bribery or corruption does not change this constitutional protection, as innocent third-party purchasers who bought the land without knowledge of the corruption have legitimate vested rights that cannot be destroyed by subsequent legislative action.</Paragraph>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Holding.p003">Furthermore, the Constitution's Contract Clause applies to contracts made by states themselves, not just private contracts, and states cannot exempt themselves from this constitutional limitation by claiming sovereign authority. While legislatures generally have broad powers to repeal their own acts, they cannot undo a completed contract that has already conveyed property rights, as this would retroactively destroy vested interests in violation of fundamental principles of law and the constitutional protection of contracts. The 1796 rescinding act was therefore void as an unconstitutional impairment of contract obligations.</Paragraph>
+        
+      
+        <Paragraph id="Fletcher_v_Peck.Holding.p004">Justice William Johnson authored a concurring opinion, agreeing with the result but basing his reasoning on general principles of law rather than specifically on the Contract Clause.</Paragraph>
+        
+    
+      </Holding>
+      
+    
+      <Decision id="Fletcher_v_Peck.Decision">The Court unanimously ruled in favor of Peck.</Decision>
+      
+    
+      <Votes majority="5" minority="0" winner="Respondent" id="Fletcher_v_Peck.Votes"/>
+      
+    
+      <Justices>
+        
+      
+        <Justice name="John Marshall" alignment="majority" role="Chief Justice" opinion_authored="majority"/>
+        
+      
+        <Justice name="Bushrod Washington" alignment="majority" role="Associate Justice" joined="John Marshall"/>
+        
+      
+        <Justice name="William Johnson" alignment="majority" role="Associate Justice" opinion_authored="concurrence" joined="John Marshall"/>
+        
+      
+        <Justice name="Henry Brockholst Livingston" alignment="majority" role="Associate Justice" joined="John Marshall"/>
+        
+      
+        <Justice name="Thomas Todd" alignment="majority" role="Associate Justice" joined="John Marshall"/>
+        
+      
+        <Justice name="William Cushing" alignment="absent" role="Associate Justice"/>
+        
+      
+        <Justice name="Samuel Chase" alignment="absent" role="Associate Justice"/>
+        
+    
+      </Justices>
+      
+    
+      <Timeline>
+        
+      
+        <Event name="Argued" date="February 15, 1810"/>
+        
+      
+        <Event name="Argued" date="March 01, 1809"/>
+        
+      
+        <Event name="Argued" date="March 02, 1809"/>
+        
+      
+        <Event name="Argued" date="March 03, 1809"/>
+        
+      
+        <Event name="Argued" date="March 04, 1809"/>
+        
+      
+        <Event name="Decided" date="March 16, 1810"/>
+        
+    
+      </Timeline>
+      
+    
+      <Citations>
+        
+      
+        <Citation>10 U.S. 87 (1810)</Citation>
+        
+    
+      </Citations>
+      
+  
+    </Case>
+    
+  
+  </SourceDataset>
+  <QAPairs caseId="Fletcher_v_Peck" caseName="Fletcher v. Peck">
+    <Pair>
+      <Question>Analyze the specific legal grounds Robert Fletcher asserted for breach of covenant against John Peck, and detail the U.S. Circuit Court for the District of Massachusetts's disposition of these claims.</Question>
+      <Answer>Robert Fletcher's suit alleged a breach of two covenants in Peck's deed. First, he claimed the State of Georgia lacked authority to make the 1795 land grant due to pervasive bribery. Second, he argued Peck's title was constitutionally impaired by Georgia's subsequent 1796 rescinding act. The U.S. Circuit Court for the District of Massachusetts ruled against Fletcher, finding Peck's pleas sufficient and concluding that Georgia was seised in fee simple of the lands at the time of the original grant, thereby finding no breach of the covenants.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Elaborate on Chief Justice Marshall's jurisprudential distinction between a legislature's general power to repeal its own acts and its inability to repeal a land grant, identifying the foundational constitutional principle supporting this differentiation.</Question>
+      <Answer>Chief Justice Marshall distinguished between a legislature's general power to repeal its own acts and its inability to repeal a land grant by focusing on the nature of the act. While legislatures can repeal general laws, they cannot undo an 'executed' contract that has conveyed vested property rights. The 1795 grant was characterized as a contract that transferred complete ownership and extinguished the state's rights, not a mere law. This distinction is underpinned by the Contract Clause of the U.S. Constitution, which prohibits states from passing any law 'impairing the Obligation of Contracts.' A legislative repeal of an executed land grant would retroactively destroy vested interests, constituting such a prohibited impairment.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Critically evaluate how the Court's holding addressed the argument that the Contract Clause should not apply to contracts made by a state acting in its sovereign capacity, as opposed to private contracts.</Question>
+      <Answer>The Court's holding explicitly established that the Contract Clause applies to contracts made by states themselves, rejecting any claim that a state's sovereign authority could exempt it from this constitutional limitation. The opinion reasoned that when Georgia conveyed the land in 1795, it entered into a binding contract. The state could not subsequently pass a law to impair that obligation, as doing so would violate fundamental principles of law and the explicit constitutional protection of contracts. The state, by entering into the contract, bound itself and could not use its legislative power to unilaterally escape its obligations.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Analyze the Supreme Court's resolution of the inherent tension between the undisputed corruption surrounding the 1795 legislative act and the property rights of subsequent, innocent purchasers.</Question>
+      <Answer>The majority opinion resolved this tension by prioritizing the rights of innocent third-party purchasers who acquired the land without knowledge of the original corruption. The Court held that while the original grant may have been procured through bribery, this fact does not negate the constitutional protection of the contract, especially concerning subsequent bona fide purchasers. It reasoned that these innocent parties had acquired 'legitimate vested rights' that could not be destroyed by a later legislative act. The constitutional infirmity, in the Court's view, was not the corrupt 1795 grant, but the 1796 rescinding act's attempt to retroactively impair the obligation of the contract upon which these innocent parties had relied.</Answer>
+    </Pair>
+    <Pair>
+      <Question>While the Court's decision was unanimous, Justice Johnson's concurrence presented an alternative legal rationale. Delineate the basis of his reasoning and its divergence from Chief Justice Marshall's majority opinion.</Question>
+      <Answer>Justice Johnson concurred with the outcome but based his reasoning on 'general principles of law' rather than explicitly relying on the Contract Clause of the U.S. Constitution. This diverges from Chief Justice Marshall's majority opinion, which was explicitly grounded in the finding that Georgia's 1796 rescinding act was void as a law 'impairing the Obligation of Contracts' in direct violation of the constitutional text. Johnson's approach suggests a belief that the rescission was invalid based on broader, perhaps natural law or common law, principles protecting vested property rights, independent of the specific constitutional prohibition cited by the majority.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Based on the Court's holding, define a state-issued land grant within the context of the Contract Clause and articulate the immediate legal consequences that flow from such a grant.</Question>
+      <Answer>The Supreme Court defined a state-issued land grant as a binding, executed contract. By characterizing the grant in this manner, the Court elevated it from a mere legislative act, which could be repealed, to a constitutionally protected agreement. The immediate legal consequences of the grant, as an executed contract, were that it vested absolute property rights in the grantees and, simultaneously, completely extinguished all of the state's rights to and power over the property. Once the contract was executed through the conveyance of land, the state's role was complete, and it could not unilaterally rescind the agreement.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Fletcher's suit alleged a breach of the covenant that Peck's title had not been 'constitutionally impaired by any subsequent act of the legislature.' How did the Supreme Court's holding directly address and resolve the claim related to this specific covenant?</Question>
+      <Answer>The Supreme Court's holding directly resolved this claim by declaring the 'subsequent act of the legislature'—the 1796 rescinding act—to be unconstitutional and void. The Court held that this act was a violation of the Contract Clause. Therefore, because the rescinding act was constitutionally invalid from its inception, it had no legal force and could not 'constitutionally impair' the title that Peck had conveyed to Fletcher. This meant Peck's covenant remained intact and had not been breached, leading to the Court's unanimous ruling in his favor.</Answer>
+    </Pair>
+    <Pair>
+      <Question>According to the Court's reasoning, identify the precise source of the limitation on Georgia's power to rescind the 1795 land grant, and explain why the state's motivation for the rescission—public outrage over corruption—was legally irrelevant to the Court's analysis of the 1796 act.</Question>
+      <Answer>The source of the limitation on Georgia's power is the Contract Clause of the U.S. Constitution, which explicitly prohibits states from passing laws that impair contract obligations. The state's motivation for the rescission, which was a response to public outrage over the bribery that procured the original grant, was legally irrelevant to the Court's analysis of the 1796 act because the constitutional prohibition is focused on the effect of a law, not the motive behind it. The Court's analysis centered on the fact that the 1796 act impaired an executed contract, and the intervention of rights held by innocent third-party purchasers made the state's corrective intentions subordinate to the constitutional protection of those vested property interests.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Describe the specific procedural mechanism by which Fletcher v. Peck reached the U.S. Supreme Court, and explain what this mechanism indicates about the nature and scope of the Supreme Court's review in this particular case.</Question>
+      <Answer>The case reached the U.S. Supreme Court via a 'writ of error.' This procedural mechanism indicates that the Supreme Court was not conducting a de novo review of the facts but rather an appellate review of the U.S. Circuit Court for the District of Massachusetts's decision for errors of law. Fletcher, as the plaintiff in error, was asserting that the circuit court had made a legal mistake in its judgment by ruling in favor of Peck and finding his pleas sufficient against the breach of covenant claims.</Answer>
+    </Pair>
+    <Pair>
+      <Question>Hypothesize how the Court's reasoning regarding 'innocent third-party purchasers' might have been applied differently if John Peck had been one of the original, corrupt legislators who directly received land from the 1795 grant, in a hypothetical suit between the State of Georgia and Peck.</Question>
+      <Answer>While the case text does not explicitly rule on this hypothetical, its reasoning strongly suggests a different outcome. The holding is anchored in the protection of 'innocent third parties who bought the land without knowledge of the corruption,' stating they have 'legitimate vested rights that cannot be destroyed.' This repeated emphasis implies the innocence of the purchaser was a critical, dispositive factor. In a suit between Georgia and a corrupt original grantee, this central element would be absent. The Court's logic, tailored to shield blameless subsequent owners from the consequences of the state's corrupt initial act, would not directly apply to protect a party who was complicit in the corruption. The holding in Fletcher v. Peck is therefore limited to protecting the chain of title for innocent purchasers, not cleansing the title for the corrupt original grantees.</Answer>
+    </Pair>
+  </QAPairs>
+</LegalDataEngineeringOutput>
