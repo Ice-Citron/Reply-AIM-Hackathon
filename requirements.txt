@@ -1,0 +1,12 @@
+chromadb
+faiss-cpu
+requests
+lxml
+numpy
+transformers
+torch
+accelerate
+streamlit>=1.42.0
+Authlib>=1.3.2
+openai>=0.27.8
+ollama
