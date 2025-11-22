@@ -65,15 +65,15 @@
             position: absolute;
             top: 80px;
             left: 20px;
-            background: hsla(0, 0%, 100%, 0.18);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 0 30px hsla(0, 0%, 100%, 0.4), inset 0 0 30px hsla(0, 0%, 100%, 0.3);
-            border: 6px solid hsla(0, 0%, 100%, 0.25);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+            border: 6px solid rgba(255, 255, 255, 0.2);
             padding: 12px 16px;
             border-radius: 8px;
             font-size: 13px;
-            color: #2d3748;
+            color: #FFFFFF;
             z-index: 1000;
         }
 
@@ -1227,7 +1227,7 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
                             ` : `
                             <div class="glass-morphism border-2 border-border rounded-lg px-4 py-3">
                                 <div class="text-sm text-text-tertiary">
-                                    ${isLoadingPrices ? 'Loading...' : 'Price N/A'}
+                                    ${isLoadingPrices ? 'Loading...' : 'Price Loading...'}
                                 </div>
                             </div>
                             `}
