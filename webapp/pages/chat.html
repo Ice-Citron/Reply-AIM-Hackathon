@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Chat with your AI Medical Assistant - Get instant medical advice 24/7">
+    <title>AI Medical Chat - Your 24/7 AI Doctor</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="relative overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="glass-morphism-strong sticky top-0 z-50 border-b border-white/20">
+        <div class="container-custom">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center gap-3">
+                    <div class="logo w-10 h-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-headline font-bold text-primary text-xl">AI Medical Assistant</div>
+                        <div class="text-xs text-success flex items-center gap-1">
+                            <span class="w-2 h-2 bg-success rounded-full animate-pulse"></span>
+                            Online now
+                        </div>
+                    </div>
+                </div>
+                <a href="landing_page.html" class="btn btn-outline text-sm px-4 py-2">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Chat Container -->
+    <main class="container-custom py-8">
+        <div class="max-w-4xl mx-auto">
+
+            <!-- Welcome Card -->
+            <div id="welcomeCard" class="card-elevated mb-6 text-center">
+                <div class="mb-4">
+                    <div class="w-16 h-16 rounded-full bg-accent-100 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-headline font-bold text-primary mb-2">Welcome to Your AI Medical Assistant</h2>
+                    <p class="text-text-secondary max-w-2xl mx-auto">
+                        I'm here to help with your health questions 24/7. You can ask about symptoms, medications, general health advice, and more.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
+                    <button class="suggestion-btn p-4 border-2 border-border rounded-lg hover:border-accent hover:bg-accent-50 transition-all duration-base text-left">
+                        <div class="font-semibold text-primary mb-1">Common Symptoms</div>
+                        <div class="text-sm text-text-secondary">Ask about headaches, fatigue, fever</div>
+                    </button>
+                    <button class="suggestion-btn p-4 border-2 border-border rounded-lg hover:border-accent hover:bg-accent-50 transition-all duration-base text-left">
+                        <div class="font-semibold text-primary mb-1">Medication Info</div>
+                        <div class="text-sm text-text-secondary">Learn about drug interactions</div>
+                    </button>
+                    <button class="suggestion-btn p-4 border-2 border-border rounded-lg hover:border-accent hover:bg-accent-50 transition-all duration-base text-left">
+                        <div class="font-semibold text-primary mb-1">Health Guidance</div>
+                        <div class="text-sm text-text-secondary">Get wellness tips and advice</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="chatContainer" class="card-elevated mb-6" style="min-height: 500px; max-height: 600px; overflow-y: auto;">
+                <div id="messagesList" class="space-y-4">
+                    <!-- Messages will be inserted here -->
+                </div>
+
+                <!-- Typing Indicator -->
+                <div id="typingIndicator" class="hidden mt-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full glass-morphism flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </div>
+                        <div class="chat-bubble chat-bubble-ai">
+                            <div class="flex gap-1">
+                                <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                                <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                                <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden mb-6 p-4 bg-error-50 border-2 border-error rounded-lg">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-error flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>
+                    <div>
+                        <div class="font-semibold text-error-700">Error</div>
+                        <div id="errorText" class="text-sm text-error-700"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="card-elevated">
+                <form id="chatForm" class="flex gap-3">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Type your medical question..."
+                        class="chat-input flex-1"
+                        autocomplete="off"
+                        required
+                    />
+                    <button type="submit" class="btn btn-primary px-6" id="sendButton">
+                        <span id="sendButtonText">Send</span>
+                        <svg id="sendIcon" class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </form>
+                <div class="mt-3 text-xs text-text-tertiary text-center">
+                    <strong>Disclaimer:</strong> This AI provides general health information only. For medical emergencies, call 911. Always consult a healthcare professional for diagnosis and treatment.
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-morphism-strong border-t border-white/20 mt-12 py-8">
+        <div class="container-custom">
+            <div class="text-center text-text-secondary text-sm">
+                <p>&copy; 2024 AI Medical Assistant. This is not a substitute for professional medical advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const API_ENDPOINT = '/api/chat'; // Update this to your actual API endpoint
+
+        // State
+        let conversationHistory = [];
+
+        // DOM Elements
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const messagesList = document.getElementById('messagesList');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const sendButton = document.getElementById('sendButton');
+        const sendButtonText = document.getElementById('sendButtonText');
+        const sendIcon = document.getElementById('sendIcon');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const welcomeCard = document.getElementById('welcomeCard');
+        const chatContainer = document.getElementById('chatContainer');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus input
+            messageInput.focus();
+
+            // Add suggestion button handlers
+            document.querySelectorAll('.suggestion-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const text = this.querySelector('.text-sm').textContent;
+                    messageInput.value = text;
+                    messageInput.focus();
+                });
+            });
+        });
+
+        // Handle form submission
+        chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Hide welcome card on first message
+            if (conversationHistory.length === 0) {
+                welcomeCard.style.display = 'none';
+            }
+
+            // Clear input
+            messageInput.value = '';
+
+            // Add user message to UI
+            addMessage(message, 'user');
+
+            // Add to conversation history
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Disable send button
+            setSendButtonState(true);
+
+            // Hide error if visible
+            hideError();
+
+            try {
+                // Make API call
+                const response = await sendMessageToAPI(message);
+
+                // Hide typing indicator
+                hideTypingIndicator();
+
+                // Add AI response to UI
+                addMessage(response, 'assistant');
+
+                // Add to conversation history
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: response
+                });
+
+            } catch (error) {
+                hideTypingIndicator();
+                showError(error.message);
+            } finally {
+                setSendButtonState(false);
+                messageInput.focus();
+            }
+        });
+
+        // Send message to API
+        async function sendMessageToAPI(message) {
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: conversationHistory
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                return data.response || data.message || 'I apologize, but I received an empty response. Please try again.';
+
+            } catch (error) {
+                // If API endpoint doesn't exist, show a helpful error with mock response
+                if (error.message.includes('Failed to fetch') || error.message.includes('404')) {
+                    console.error('API endpoint not configured. Using mock response.');
+                    // Return a mock response for demonstration
+                    return getMockResponse(message);
+                }
+                throw error;
+            }
+        }
+
+        // Mock response for when API is not available (for demonstration)
+        function getMockResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            if (lowerMessage.includes('headache') || lowerMessage.includes('head')) {
+                return "I understand you're experiencing headaches. Headaches can have many causes including:\n\n• Tension or stress\n• Dehydration\n• Eye strain\n• Lack of sleep\n• Certain foods or medications\n\nFor relief, you might try:\n• Drinking plenty of water\n• Resting in a quiet, dark room\n• Applying a cold compress\n• Taking over-the-counter pain relief (as directed)\n\nIf headaches are severe, persistent, or accompanied by other symptoms like vision changes, fever, or neck stiffness, please consult a healthcare provider immediately.";
+            } else if (lowerMessage.includes('fever') || lowerMessage.includes('temperature')) {
+                return "A fever is generally defined as a body temperature above 100.4°F (38°C). Common causes include:\n\n• Viral or bacterial infections\n• Inflammatory conditions\n• Heat exhaustion\n• Certain medications\n\nRecommendations:\n• Stay hydrated with plenty of fluids\n• Rest\n• Use fever reducers like acetaminophen or ibuprofen (as directed)\n• Dress in light clothing\n\nSeek immediate medical attention if fever is:\n• Above 103°F (39.4°C)\n• Lasting more than 3 days\n• Accompanied by severe symptoms like difficulty breathing, chest pain, or confusion";
+            } else if (lowerMessage.includes('fatigue') || lowerMessage.includes('tired')) {
+                return "Chronic fatigue can stem from various factors:\n\n• Insufficient sleep or poor sleep quality\n• Anemia or nutritional deficiencies\n• Thyroid problems\n• Depression or anxiety\n• Chronic conditions like diabetes or heart disease\n\nSteps to address fatigue:\n• Maintain a regular sleep schedule (7-9 hours)\n• Exercise regularly\n• Eat a balanced diet\n• Manage stress\n• Limit caffeine and alcohol\n\nIf fatigue persists despite lifestyle changes, consider getting blood work done to check for underlying conditions.";
+            } else {
+                return `Thank you for your question. While I can provide general health information, I recommend consulting with a healthcare professional for personalized medical advice about: "${message}"\n\nIn the meantime, here are some general tips:\n• Keep track of your symptoms (when they started, severity, triggers)\n• Stay hydrated and maintain a healthy diet\n• Get adequate rest\n• Avoid self-diagnosis and self-medication without professional guidance\n\nIs there anything specific about your symptoms or concerns you'd like to discuss?`;
+            }
+        }
+
+        // Add message to chat UI
+        function addMessage(text, role) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'animate-fade-in';
+
+            if (role === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex items-start gap-3 justify-end">
+                        <div class="chat-bubble chat-bubble-user max-w-[80%]">
+                            <p class="text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full glass-morphism flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </div>
+                        <div class="chat-bubble chat-bubble-ai max-w-[85%]">
+                            <p class="text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            messagesList.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Utility functions
+        function showTypingIndicator() {
+            typingIndicator.classList.remove('hidden');
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.classList.add('hidden');
+        }
+
+        function setSendButtonState(disabled) {
+            sendButton.disabled = disabled;
+            if (disabled) {
+                sendButtonText.textContent = 'Sending...';
+                sendButton.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                sendButtonText.textContent = 'Send';
+                sendButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            scrollToBottom();
+        }
+
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Clear chat function (can be called from console for testing)
+        function clearChat() {
+            conversationHistory = [];
+            messagesList.innerHTML = '';
+            welcomeCard.style.display = 'block';
+            hideError();
+        }
+
+        // Expose for debugging
+        window.chatDebug = {
+            clearChat,
+            conversationHistory,
+            addMessage
+        };
+    </script>
+
+</body>
+</html>

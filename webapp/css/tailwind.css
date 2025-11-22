@@ -301,6 +301,14 @@
     border: 6px solid rgba(255, 255, 255, 0.25);
   }
 
+  .glass-morphism-extra-strong {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(100px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.25);
+  }
+
   /* Text Gradients */
   .text-gradient-primary {
     background: linear-gradient(135deg, #4A90E2 0%, #8B7EC8 100%);
