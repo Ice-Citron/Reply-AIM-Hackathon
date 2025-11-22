@@ -35,34 +35,38 @@ function MapTab({ selectedHospitals }) {
 
   // Initialize map
   useEffect(() => {
+    console.log('MapTab: Initializing map...');
+    console.log('MAPBOX_TOKEN:', MAPBOX_TOKEN ? 'Present' : 'Missing');
+
     if (!MAPBOX_TOKEN) {
+      console.error('No Mapbox token found!');
       setError('Mapbox token not configured. Please add VITE_MAPBOX_TOKEN to your .env file.');
       setLoading(false);
       return;
     }
 
-    if (mapRef.current || !mapContainerRef.current) return;
+    if (mapRef.current) {
+      console.log('Map already initialized');
+      return;
+    }
 
+    if (!mapContainerRef.current) {
+      console.log('Map container not ready');
+      return;
+    }
+
+    console.log('Creating map with token:', MAPBOX_TOKEN.substring(0, 20) + '...');
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
     try {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [-95, 38], // Center of US
-        zoom: 3,
-        projection: 'globe',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [0, 20],
+        zoom: 2,
       });
 
-      mapRef.current.on('load', () => {
-        mapRef.current.setFog({
-          color: 'rgb(186, 210, 235)',
-          'high-color': 'rgb(36, 92, 223)',
-          'horizon-blend': 0.02,
-          'space-color': 'rgb(11, 11, 25)',
-          'star-intensity': 0.6,
-        });
-      });
+      console.log('Map created successfully!');
 
       return () => {
         if (mapRef.current) {
@@ -116,44 +120,39 @@ function MapTab({ selectedHospitals }) {
     });
   }, [hospitals, loading]);
 
-  if (loading) {
-    return (
-      <div className="map-container">
-        <div className="loading">Loading hospitals...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="map-container">
-        <div className="error">
-          {error}
-          <br /><br />
-          {!MAPBOX_TOKEN && (
-            <>
-              <strong>To fix this:</strong><br />
-              1. Get a free token at <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer">mapbox.com</a><br />
-              2. Create a <code>.env</code> file in the frontend folder<br />
-              3. Add: <code>VITE_MAPBOX_TOKEN=your_token_here</code><br />
-              4. Restart the dev server
-            </>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="map-container">
-      <div className="map-wrapper" ref={mapContainerRef} />
-      <div className="map-info">
-        🔵 US Hospitals ({hospitals.filter(h => h.country === 'US').length})
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        🟠 International Hospitals ({hospitals.filter(h => h.country !== 'US').length})
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        Click markers for details
+      {/* Separate containers for map and overlays */}
+      <div className="map-wrapper">
+        <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
+        {loading && (
+          <div className="loading">Loading hospitals...</div>
+        )}
+        {error && (
+          <div className="error">
+            {error}
+            <br /><br />
+            {!MAPBOX_TOKEN && (
+              <>
+                <strong>To fix this:</strong><br />
+                1. Get a free token at <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer">mapbox.com</a><br />
+                2. Create a <code>.env</code> file in the frontend folder<br />
+                3. Add: <code>VITE_MAPBOX_TOKEN=your_token_here</code><br />
+                4. Restart the dev server
+              </>
+            )}
+          </div>
+        )}
       </div>
+      {!loading && !error && (
+        <div className="map-info">
+          🔵 US Hospitals ({hospitals.filter(h => h.country === 'US').length})
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          🟠 International Hospitals ({hospitals.filter(h => h.country !== 'US').length})
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          Click markers for details
+        </div>
+      )}
     </div>
   );
 }
