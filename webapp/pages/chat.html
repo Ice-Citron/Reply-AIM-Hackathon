@@ -7,6 +7,51 @@
     <title>AI Medical Chat - Your 24/7 AI Doctor</title>
     <link rel="stylesheet" href="../css/main.css">
     <script src="../js/config.js"></script>
+    <style>
+        /* Sliding panel styles */
+        .chat-wrapper {
+            transition: width 0.3s ease, margin-right 0.3s ease;
+            width: 100%;
+        }
+
+        .chat-wrapper.panel-open {
+            width: 55%;
+            margin-right: 45%;
+        }
+
+        .clinic-panel {
+            position: fixed;
+            top: 0;
+            right: -45%;
+            width: 45%;
+            height: 100vh;
+            background: white;
+            transition: right 0.3s ease;
+            z-index: 100;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+        }
+
+        .clinic-panel.open {
+            right: 0;
+        }
+
+        @media (max-width: 768px) {
+            .chat-wrapper.panel-open {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .clinic-panel {
+                right: -100%;
+                width: 100%;
+            }
+
+            .clinic-panel.open {
+                right: 0;
+            }
+        }
+    </style>
 </head>
 <body class="relative overflow-x-hidden">
 
@@ -44,8 +89,10 @@
         </div>
     </header>
 
-    <!-- Main Chat Container -->
-    <main class="container-custom py-8">
+    <!-- Chat Wrapper (shrinks when panel is open) -->
+    <div id="chatWrapper" class="chat-wrapper">
+        <!-- Main Chat Container -->
+        <main class="container-custom py-8">
         <div class="max-w-4xl mx-auto">
 
             <!-- Welcome Card -->
@@ -141,40 +188,34 @@
         </div>
     </main>
 
-    <!-- Clinic Finder Modal -->
-    <div id="clinicFinderModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-        <!-- Modal Backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" id="modalBackdrop"></div>
+    <!-- Clinic Finder Side Panel -->
+    <div id="clinicFinderModal" class="clinic-panel">
+        <!-- Panel Header -->
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <h2 class="text-2xl font-headline font-bold text-primary">Clinic Finder with Pricing</h2>
+            </div>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
 
-        <!-- Modal Content -->
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-fade-in">
-                <!-- Modal Header -->
-                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <h2 class="text-2xl font-headline font-bold text-primary">Clinic Finder with Pricing</h2>
-                    </div>
-                    <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
+        <!-- Panel Body -->
+        <div class="p-6">
+            <p class="text-text-secondary mb-6">
+                Find nearby medical clinics with pricing information for your treatment needs.
+            </p>
 
-                <!-- Modal Body -->
-                <div class="p-6">
-                    <p class="text-text-secondary mb-6">
-                        Find nearby medical clinics with pricing information for your treatment needs.
-                    </p>
-
-                    <!-- Search Form -->
-                    <div class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-primary mb-2">
+            <!-- Search Form -->
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-2">
                                 Location *
                             </label>
                             <input
@@ -185,8 +226,8 @@
                             />
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-primary mb-2">
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-2">
                                 Diagnosis / Treatment Type (Optional)
                             </label>
                             <input
@@ -241,27 +282,29 @@
                             </p>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <!-- Modal Footer -->
-                <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-xl">
-                    <p class="text-xs text-text-tertiary text-center">
-                        Prices are fetched from web search or estimated based on facility type and location.
-                        <br />Always verify pricing directly with the healthcare provider.
-                    </p>
-                </div>
+            <!-- Panel Footer -->
+            <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4">
+                <p class="text-xs text-text-tertiary text-center">
+                    Prices are fetched from web search or estimated based on facility type and location.
+                    <br />Always verify pricing directly with the healthcare provider.
+                </p>
             </div>
         </div>
     </div>
+    <!-- End Clinic Finder Panel -->
 
-    <!-- Footer -->
-    <footer class="glass-morphism-strong border-t border-white/20 mt-12 py-8">
-        <div class="container-custom">
-            <div class="text-center text-text-secondary text-sm">
-                <p>&copy; 2024 AI Medical Assistant. This is not a substitute for professional medical advice.</p>
+        <!-- Footer -->
+        <footer class="glass-morphism-strong border-t border-white/20 mt-12 py-8">
+            <div class="container-custom">
+                <div class="text-center text-text-secondary text-sm">
+                    <p>&copy; 2024 AI Medical Assistant. This is not a substitute for professional medical advice.</p>
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
+    <!-- End Chat Wrapper -->
 
     <script>
         // Configuration
@@ -505,10 +548,10 @@
 
         // ===== CLINIC FINDER MODAL =====
 
+        const chatWrapper = document.getElementById('chatWrapper');
         const clinicFinderModal = document.getElementById('clinicFinderModal');
         const openClinicFinderBtn = document.getElementById('openClinicFinderBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalBackdrop = document.getElementById('modalBackdrop');
         const findClinicsBtn = document.getElementById('findClinicsBtn');
         const findClinicsText = document.getElementById('findClinicsText');
         const clinicLocation = document.getElementById('clinicLocation');
@@ -523,18 +566,17 @@
         let isLoadingClinics = false;
         let isLoadingPrices = false;
 
-        // Modal controls
+        // Panel controls
         openClinicFinderBtn.addEventListener('click', () => {
-            clinicFinderModal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            clinicFinderModal.classList.add('open');
+            chatWrapper.classList.add('panel-open');
         });
 
-        closeModalBtn.addEventListener('click', closeClinicModal);
-        modalBackdrop.addEventListener('click', closeClinicModal);
+        closeModalBtn.addEventListener('click', closeClinicPanel);
 
-        function closeClinicModal() {
-            clinicFinderModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+        function closeClinicPanel() {
+            clinicFinderModal.classList.remove('open');
+            chatWrapper.classList.remove('panel-open');
         }
 
         // Enter key support
