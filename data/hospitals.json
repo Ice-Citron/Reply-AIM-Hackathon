@@ -1,0 +1,272 @@
+[
+  {
+    "id": "us_h_1",
+    "name": "Massachusetts General Hospital",
+    "country": "US",
+    "city": "Boston",
+    "state": "MA",
+    "lat": 42.3626,
+    "lng": -71.0695,
+    "reliability_score": 92,
+    "procedures": {
+      "hip_replacement": { "price": 35000, "currency": "USD" },
+      "knee_replacement": { "price": 32000, "currency": "USD" },
+      "heart_surgery": { "price": 120000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_2",
+    "name": "Mayo Clinic",
+    "country": "US",
+    "city": "Rochester",
+    "state": "MN",
+    "lat": 44.0225,
+    "lng": -92.4659,
+    "reliability_score": 95,
+    "procedures": {
+      "hip_replacement": { "price": 38000, "currency": "USD" },
+      "knee_replacement": { "price": 35000, "currency": "USD" },
+      "heart_surgery": { "price": 125000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_3",
+    "name": "Cleveland Clinic",
+    "country": "US",
+    "city": "Cleveland",
+    "state": "OH",
+    "lat": 41.5034,
+    "lng": -81.6221,
+    "reliability_score": 93,
+    "procedures": {
+      "hip_replacement": { "price": 33000, "currency": "USD" },
+      "knee_replacement": { "price": 30000, "currency": "USD" },
+      "heart_surgery": { "price": 115000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_4",
+    "name": "Johns Hopkins Hospital",
+    "country": "US",
+    "city": "Baltimore",
+    "state": "MD",
+    "lat": 39.2971,
+    "lng": -76.5929,
+    "reliability_score": 94,
+    "procedures": {
+      "hip_replacement": { "price": 36000, "currency": "USD" },
+      "knee_replacement": { "price": 33000, "currency": "USD" },
+      "heart_surgery": { "price": 118000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_5",
+    "name": "UCLA Medical Center",
+    "country": "US",
+    "city": "Los Angeles",
+    "state": "CA",
+    "lat": 34.0655,
+    "lng": -118.4456,
+    "reliability_score": 90,
+    "procedures": {
+      "hip_replacement": { "price": 42000, "currency": "USD" },
+      "knee_replacement": { "price": 38000, "currency": "USD" },
+      "heart_surgery": { "price": 135000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "th_h_1",
+    "name": "Bumrungrad International Hospital",
+    "country": "Thailand",
+    "city": "Bangkok",
+    "state": null,
+    "lat": 13.7439,
+    "lng": 100.5597,
+    "reliability_score": 88,
+    "procedures": {
+      "hip_replacement": { "price": 12000, "currency": "USD" },
+      "knee_replacement": { "price": 11000, "currency": "USD" },
+      "heart_surgery": { "price": 35000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "th_h_2",
+    "name": "Bangkok Hospital",
+    "country": "Thailand",
+    "city": "Bangkok",
+    "state": null,
+    "lat": 13.7414,
+    "lng": 100.5588,
+    "reliability_score": 85,
+    "procedures": {
+      "hip_replacement": { "price": 10000, "currency": "USD" },
+      "knee_replacement": { "price": 9500, "currency": "USD" },
+      "heart_surgery": { "price": 32000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "mx_h_1",
+    "name": "Hospital Angeles Tijuana",
+    "country": "Mexico",
+    "city": "Tijuana",
+    "state": null,
+    "lat": 32.5149,
+    "lng": -117.0382,
+    "reliability_score": 82,
+    "procedures": {
+      "hip_replacement": { "price": 15000, "currency": "USD" },
+      "knee_replacement": { "price": 13000, "currency": "USD" },
+      "heart_surgery": { "price": 45000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "in_h_1",
+    "name": "Apollo Hospital Chennai",
+    "country": "India",
+    "city": "Chennai",
+    "state": null,
+    "lat": 13.0381,
+    "lng": 80.2206,
+    "reliability_score": 86,
+    "procedures": {
+      "hip_replacement": { "price": 8000, "currency": "USD" },
+      "knee_replacement": { "price": 7500, "currency": "USD" },
+      "heart_surgery": { "price": 25000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "in_h_2",
+    "name": "Fortis Memorial Research Institute",
+    "country": "India",
+    "city": "New Delhi",
+    "state": null,
+    "lat": 28.4595,
+    "lng": 77.0266,
+    "reliability_score": 84,
+    "procedures": {
+      "hip_replacement": { "price": 8500, "currency": "USD" },
+      "knee_replacement": { "price": 8000, "currency": "USD" },
+      "heart_surgery": { "price": 27000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "tr_h_1",
+    "name": "Acibadem Maslak Hospital",
+    "country": "Turkey",
+    "city": "Istanbul",
+    "state": null,
+    "lat": 41.1104,
+    "lng": 29.0262,
+    "reliability_score": 83,
+    "procedures": {
+      "hip_replacement": { "price": 9000, "currency": "USD" },
+      "knee_replacement": { "price": 8500, "currency": "USD" },
+      "heart_surgery": { "price": 30000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_6",
+    "name": "Mount Sinai Hospital",
+    "country": "US",
+    "city": "New York",
+    "state": "NY",
+    "lat": 40.7903,
+    "lng": -73.9522,
+    "reliability_score": 91,
+    "procedures": {
+      "hip_replacement": { "price": 40000, "currency": "USD" },
+      "knee_replacement": { "price": 37000, "currency": "USD" },
+      "heart_surgery": { "price": 130000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_7",
+    "name": "Stanford Health Care",
+    "country": "US",
+    "city": "Palo Alto",
+    "state": "CA",
+    "lat": 37.4419,
+    "lng": -122.1430,
+    "reliability_score": 92,
+    "procedures": {
+      "hip_replacement": { "price": 41000, "currency": "USD" },
+      "knee_replacement": { "price": 39000, "currency": "USD" },
+      "heart_surgery": { "price": 140000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_8",
+    "name": "Cedars-Sinai Medical Center",
+    "country": "US",
+    "city": "Los Angeles",
+    "state": "CA",
+    "lat": 34.0755,
+    "lng": -118.3778,
+    "reliability_score": 89,
+    "procedures": {
+      "hip_replacement": { "price": 39000, "currency": "USD" },
+      "knee_replacement": { "price": 36000, "currency": "USD" },
+      "heart_surgery": { "price": 128000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "us_h_9",
+    "name": "Northwestern Memorial Hospital",
+    "country": "US",
+    "city": "Chicago",
+    "state": "IL",
+    "lat": 41.8956,
+    "lng": -87.6195,
+    "reliability_score": 90,
+    "procedures": {
+      "hip_replacement": { "price": 37000, "currency": "USD" },
+      "knee_replacement": { "price": 34000, "currency": "USD" },
+      "heart_surgery": { "price": 122000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "sg_h_1",
+    "name": "Singapore General Hospital",
+    "country": "Singapore",
+    "city": "Singapore",
+    "state": null,
+    "lat": 1.2794,
+    "lng": 103.8350,
+    "reliability_score": 91,
+    "procedures": {
+      "hip_replacement": { "price": 18000, "currency": "USD" },
+      "knee_replacement": { "price": 16000, "currency": "USD" },
+      "heart_surgery": { "price": 55000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "de_h_1",
+    "name": "Charité - Universitätsmedizin Berlin",
+    "country": "Germany",
+    "city": "Berlin",
+    "state": null,
+    "lat": 52.5254,
+    "lng": 13.3768,
+    "reliability_score": 89,
+    "procedures": {
+      "hip_replacement": { "price": 20000, "currency": "USD" },
+      "knee_replacement": { "price": 18000, "currency": "USD" },
+      "heart_surgery": { "price": 65000, "currency": "USD" }
+    }
+  },
+  {
+    "id": "kr_h_1",
+    "name": "Samsung Medical Center",
+    "country": "South Korea",
+    "city": "Seoul",
+    "state": null,
+    "lat": 37.4880,
+    "lng": 127.0855,
+    "reliability_score": 88,
+    "procedures": {
+      "hip_replacement": { "price": 14000, "currency": "USD" },
+      "knee_replacement": { "price": 13000, "currency": "USD" },
+      "heart_surgery": { "price": 40000, "currency": "USD" }
+    }
+  }
+]
