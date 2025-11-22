@@ -93,8 +93,6 @@
     <div id="chatWrapper" class="chat-wrapper">
         <!-- Main Chat Container -->
         <main class="container-custom py-8">
-        <div class="max-w-4xl mx-auto">
-
             <!-- Welcome Card -->
             <div id="welcomeCard" class="card-elevated mb-6 text-center">
                 <div class="mb-4">
@@ -184,9 +182,7 @@
                     <strong>Disclaimer:</strong> This AI provides general health information only. For medical emergencies, call 911. Always consult a healthcare professional for diagnosis and treatment.
                 </div>
             </div>
-
-        </div>
-    </main>
+        </main>
 
     <!-- Clinic Finder Side Panel -->
     <div id="clinicFinderModal" class="clinic-panel">
@@ -565,6 +561,72 @@
         let clinicsData = [];
         let isLoadingClinics = false;
         let isLoadingPrices = false;
+        let userLocation = null;
+
+        // Geocoding function using Mapbox
+        async function geocodeAddress(address) {
+            try {
+                const encodedAddress = encodeURIComponent(address);
+                const response = await fetch(
+                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${API_CONFIG.MAPBOX_API_KEY}&limit=1`
+                );
+                const data = await response.json();
+
+                if (data.features && data.features.length > 0) {
+                    const coords = data.features[0].center;
+                    return { lng: coords[0], lat: coords[1] };
+                }
+                return null;
+            } catch (error) {
+                console.error('Geocoding error:', error);
+                return null;
+            }
+        }
+
+        // Calculate distance and duration using Mapbox Matrix API
+        async function calculateDistances(originCoords, clinicCoords) {
+            try {
+                // Mapbox Matrix API format: lng,lat;lng,lat;...
+                const coordinates = [
+                    `${originCoords.lng},${originCoords.lat}`,
+                    ...clinicCoords.map(c => `${c.lng},${c.lat}`)
+                ].join(';');
+
+                const response = await fetch(
+                    `https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${coordinates}?sources=0&annotations=distance,duration&access_token=${API_CONFIG.MAPBOX_API_KEY}`
+                );
+                const data = await response.json();
+
+                if (data.distances && data.durations) {
+                    // distances[0] contains distances from origin to all destinations
+                    // Skip first element (distance to self)
+                    return data.distances[0].slice(1).map((distance, index) => ({
+                        distance: distance, // meters
+                        duration: data.durations[0][index + 1] // seconds
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error('Distance calculation error:', error);
+                return [];
+            }
+        }
+
+        // Format distance for display
+        function formatDistance(meters) {
+            const miles = meters * 0.000621371;
+            if (miles < 0.1) return `${Math.round(meters)} m`;
+            return `${miles.toFixed(1)} mi`;
+        }
+
+        // Format duration for display
+        function formatDuration(seconds) {
+            const minutes = Math.round(seconds / 60);
+            if (minutes < 60) return `${minutes} min`;
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+        }
 
         // Panel controls
         openClinicFinderBtn.addEventListener('click', () => {
@@ -672,13 +734,18 @@ Provide at least 5-8 clinics if possible. Return ONLY the JSON array, nothing el
                         ...clinic,
                         price: null,
                         priceRange: null,
-                        currency: 'USD'
+                        currency: 'USD',
+                        distance: null,
+                        duration: null
                     }));
 
                     displayClinics();
 
                     // Fetch prices for all clinics
                     await fetchPricesForClinics();
+
+                    // Calculate distances and travel times
+                    await fetchDistancesForClinics(location);
                 } else {
                     showClinicError('No clinics found. Try a different location or be more specific.');
                 }
@@ -809,6 +876,64 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
             };
         }
 
+        async function fetchDistancesForClinics(originAddress) {
+            setFindButtonState('Calculating distances...');
+
+            try {
+                // Geocode the origin (user's location)
+                const originCoords = await geocodeAddress(originAddress);
+
+                if (!originCoords) {
+                    console.error('Could not geocode origin address');
+                    return;
+                }
+
+                userLocation = originCoords;
+
+                // Geocode all clinic addresses
+                const clinicCoords = [];
+                for (const clinic of clinicsData) {
+                    const coords = await geocodeAddress(clinic.address);
+                    clinicCoords.push(coords);
+                }
+
+                // Filter out any failed geocoding
+                const validClinics = clinicsData.filter((_, index) => clinicCoords[index] !== null);
+                const validCoords = clinicCoords.filter(c => c !== null);
+
+                if (validCoords.length === 0) {
+                    console.error('Could not geocode any clinic addresses');
+                    return;
+                }
+
+                // Calculate distances using Mapbox Matrix API
+                const distances = await calculateDistances(originCoords, validCoords);
+
+                // Update clinicsData with distance and duration
+                let distanceIndex = 0;
+                clinicsData = clinicsData.map((clinic, index) => {
+                    if (clinicCoords[index] !== null && distances[distanceIndex]) {
+                        const distanceData = distances[distanceIndex];
+                        distanceIndex++;
+                        return {
+                            ...clinic,
+                            distance: distanceData.distance,
+                            duration: distanceData.duration,
+                            coords: clinicCoords[index]
+                        };
+                    }
+                    return clinic;
+                });
+
+                displayClinics();
+
+            } catch (error) {
+                console.error('Error calculating distances:', error);
+            } finally {
+                setFindButtonState('Find Clinics with Prices');
+            }
+        }
+
         function displayClinics() {
             // Sort by price
             const sortedClinics = [...clinicsData].sort((a, b) => {
@@ -836,6 +961,23 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
                                 ` : ''}
 
                                 ${clinic.phone ? `<p>📞 ${escapeHtml(clinic.phone)}</p>` : ''}
+
+                                ${clinic.distance && clinic.duration ? `
+                                <div class="flex items-center gap-3 mt-2">
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                        </svg>
+                                        <span class="font-medium text-primary">${formatDistance(clinic.distance)}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="font-medium text-primary">${formatDuration(clinic.duration)}</span>
+                                    </div>
+                                </div>
+                                ` : ''}
 
                                 <div class="flex flex-wrap gap-2 mt-2">
                                     ${clinic.type ? `
@@ -899,7 +1041,9 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
                     price: 120,
                     priceRange: '100-150',
                     currency: 'USD',
-                    priceNotes: 'Initial consultation (demo data)'
+                    priceNotes: 'Initial consultation (demo data)',
+                    distance: 2400, // 2.4 km in meters
+                    duration: 480   // 8 minutes in seconds
                 },
                 {
                     name: `${location} Urgent Care`,
@@ -910,7 +1054,9 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
                     price: 150,
                     priceRange: '120-180',
                     currency: 'USD',
-                    priceNotes: 'Walk-in visit (demo data)'
+                    priceNotes: 'Walk-in visit (demo data)',
+                    distance: 4800, // 4.8 km in meters
+                    duration: 720   // 12 minutes in seconds
                 },
                 {
                     name: `${location} Community Hospital`,
@@ -921,7 +1067,9 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
                     price: 250,
                     priceRange: '200-300',
                     currency: 'USD',
-                    priceNotes: 'ER visit (demo data)'
+                    priceNotes: 'ER visit (demo data)',
+                    distance: 8000, // 8 km in meters
+                    duration: 960   // 16 minutes in seconds
                 }
             ];
 
