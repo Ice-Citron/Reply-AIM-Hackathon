@@ -62,9 +62,8 @@ function MapTab({ selectedHospitals }) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [0, 20], // Center of world
-        zoom: 1.5,
-        // Removed globe projection for compatibility
+        center: [0, 20],
+        zoom: 2,
       });
 
       console.log('Map created successfully!');

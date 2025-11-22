@@ -229,6 +229,8 @@ body {
   height: 100% !important;
 }
 
+/* Map styling - keep default colors */
+
 .mapboxgl-popup-content {
   padding: 1rem;
   min-width: 200px;
