@@ -804,8 +804,8 @@
             map = new mapboxgl.Map({
                 container: 'mapContainer',
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [-98.5795, 39.8283], // Center of US
-                zoom: 4
+                center: [0, 20], // Global view
+                zoom: 1 // Zoomed out to show whole globe
             });
 
             map.addControl(new mapboxgl.NavigationControl(), 'top-right');
