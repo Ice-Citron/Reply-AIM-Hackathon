@@ -28,6 +28,7 @@
     @apply bg-background font-body text-text-primary;
     background: linear-gradient(180deg, #E5E9F6 0%, #F0F4FF 100%);
     min-height: 100vh;
+    zoom: 95%;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -71,12 +72,12 @@
   }
 
   .btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.125);
   }
 
   .btn-primary {
     @apply text-primary;
-    background: rgba(74, 144, 226, 0.15);
+    background: rgba(74, 144, 226, 0.125);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
@@ -84,7 +85,7 @@
   }
 
   .btn-primary:hover {
-    background: rgba(74, 144, 226, 0.2);
+    background: rgba(74, 144, 226, 0.15);
   }
 
   .btn-outline {
@@ -133,7 +134,7 @@
 
   .card-elevated {
     @apply rounded-2xl p-8 transition-all duration-300;
-    background: rgba(0, 0, 0, 0.02);
+    background: rgba(0, 0, 0, 0.01);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
@@ -141,7 +142,7 @@
   }
 
   .card-elevated:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgba(0, 0, 0, 0.03);
   }
 
   .card-glass {
@@ -268,13 +269,18 @@
 
   /* Glass Panel */
   .glass-panel {
-    @apply rounded-3xl;
+    @apply rounded-3xl transition-all;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
     border: 6px solid rgba(255, 255, 255, 0.2);
   }
+
+  .glass-panel:hover {
+    background: rgba(255, 255, 255, 0.075);
+  }
+
 }
 
 @layer utilities {
