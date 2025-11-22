@@ -25,10 +25,10 @@
             right: -45%;
             width: 45%;
             height: 100vh;
-            background: white;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             transition: right 0.3s ease;
             z-index: 100;
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
             overflow-y: auto;
         }
 
@@ -191,7 +191,7 @@
     <!-- Clinic Finder Side Panel -->
     <div id="clinicFinderModal" class="clinic-panel">
         <!-- Panel Header -->
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+        <div class="sticky top-0 glass-morphism-strong border-b border-white/20 px-6 py-4 flex items-center justify-between z-10">
             <div class="flex items-center gap-3">
                 <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -274,7 +274,7 @@
                             <!-- Clinic cards will be inserted here -->
                         </div>
 
-                        <div class="mt-6 p-4 glass-morphism rounded-lg border border-primary-200">
+                        <div class="mt-6 p-4 glass-morphism rounded-lg border border-white/20">
                             <p class="text-sm text-text-secondary">
                                 <strong class="text-primary">Next Steps:</strong> Use these clinic addresses with the Google Maps API
                                 to calculate travel times. You can also compare these prices with international
@@ -285,7 +285,7 @@
             </div>
 
             <!-- Panel Footer -->
-            <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4">
+            <div class="sticky bottom-0 glass-morphism border-t border-white/20 px-6 py-4">
                 <p class="text-xs text-text-tertiary text-center">
                     Prices are fetched from web search or estimated based on facility type and location.
                     <br />Always verify pricing directly with the healthcare provider.
