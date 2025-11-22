@@ -209,3 +209,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+.DS_Store
+node_modules
+package-lock.json
+
+# API Keys and sensitive configuration
+webapp/js/config.js

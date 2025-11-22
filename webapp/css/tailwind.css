@@ -1,0 +1,326 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Liquid Glass Color Variables */
+    --color-primary: #4A90E2;
+    --color-secondary: #8B7EC8;
+    --color-accent: #5ED4D9;
+    --color-background: #FAFBFF;
+    --color-surface-glass: rgba(255, 255, 255, 0.7);
+    --color-text-primary: #2D3748;
+    --color-text-secondary: #718096;
+    --color-text-tertiary: #A0AEC0;
+
+    /* Glass Effects */
+    --glass-blur: blur(12px);
+    --glass-blur-lg: blur(16px);
+    --glass-blur-xl: blur(24px);
+  }
+
+  body {
+    @apply bg-background font-body text-text-primary;
+    background: linear-gradient(180deg, #E5E9F6 0%, #F0F4FF 100%);
+    min-height: 100vh;
+    zoom: 95%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline font-semibold;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg lg:text-xl;
+  }
+}
+
+@layer components {
+  /* Glass Button Components */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 font-cta font-semibold transition-all duration-300;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .btn:hover {
+    background: rgba(255, 255, 255, 0.125);
+  }
+
+  .btn-primary {
+    @apply text-primary;
+    background: rgba(74, 144, 226, 0.125);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(74, 144, 226, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: rgba(74, 144, 226, 0.15);
+  }
+
+  .btn-outline {
+    @apply text-primary;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-glass {
+    @apply text-text-primary;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .btn-glass:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .logo {
+    background: rgba(0, 0, 100, 0.09) !important;
+  }
+
+  .logo-weak {
+    background: rgba(0, 0, 100, 0.06) !important;
+  }
+
+  /* Glass Card Components */
+  .card {
+    @apply rounded-2xl p-6;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .card-elevated {
+    @apply rounded-2xl p-8 transition-all duration-300;
+    background: rgba(0, 0, 0, 0.01);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .card-elevated:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .card-glass {
+    @apply rounded-3xl p-8;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .card-glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Chat Interface Components */
+  .chat-bubble {
+    @apply rounded-2xl p-4;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .chat-bubble-user {
+    background: rgba(74, 144, 226, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(74, 144, 226, 0.25);
+  }
+
+  .chat-bubble-ai {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .chat-input {
+    @apply w-full rounded-xl px-4 py-3 transition-all duration-300;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .chat-input:focus {
+    @apply outline-none;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Form Components */
+  .form-input {
+    @apply w-full rounded-xl px-4 py-3 transition-all duration-300;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .form-input:focus {
+    @apply outline-none;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .form-label {
+    @apply mb-2 block text-sm font-medium text-text-primary;
+  }
+
+  /* Badge Components */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-medium;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .badge-success {
+    @apply text-success-700;
+    background: rgba(72, 213, 151, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(72, 213, 151, 0.25);
+  }
+
+  .badge-glass {
+    @apply text-text-primary;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Section Components */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-alt {
+    @apply bg-gradient-to-br from-primary-50/30 to-secondary-50/30 py-16 md:py-24;
+    position: relative;
+  }
+
+  .section-alt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(94, 212, 217, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Glass Panel */
+  .glass-panel {
+    @apply rounded-3xl transition-all;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-panel:hover {
+    background: rgba(255, 255, 255, 0.075);
+  }
+
+}
+
+@layer utilities {
+  /* Glass Utilities */
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-morphism-strong {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .glass-morphism-extra-strong {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(100px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 6px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* Text Gradients */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #4A90E2 0%, #8B7EC8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #5ED4D9 0%, #4A90E2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
