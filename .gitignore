@@ -1,3 +1,6 @@
+*.art/
+*wandb/
+
 # Secrets file containing API keys
 secretsConfig.py
 

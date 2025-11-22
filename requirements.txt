@@ -1,14 +1,14 @@
 # Core RL Training
 openpipe-art==0.5.0
-torch>=2.0.0
-transformers>=4.36.0
-peft>=0.7.0
-accelerate>=0.25.0
+torch>=2.4.0              # H100s need new PyTorch (2.4+) for Flash Attn
+transformers>=4.45.0      # MUST be new for vLLM 0.6.3 + Peft
+peft>=0.12.0              # Upgrade this to match new transformers
+accelerate>=0.33.0
 
 # RAG Components
 faiss-cpu>=1.7.4
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
+chromadb>=0.5.0           # 0.4.0 is getting old
+sentence-transformers>=3.0.0 # 2.2.0 is old; 3.x is faster
 
 # API & LLM
 openai>=1.0.0
@@ -26,5 +26,22 @@ requests>=2.31.0
 wandb>=0.16.0
 tqdm>=4.65.0
 
-# Optional: For local inference
-# vllm>=0.2.0  # Only if running inference locally
+# H100 Speed & Inference (The "V8 Engine" parts)
+vllm==0.6.3               # Strict pin for H100 stability
+flash-attn>=2.6.3         # Mandatory for H100
+
+# Advanced Fine-tuning (Meta's stack)
+torchtune>=0.2.0
+torchao>=0.3.0            # 0.1.0 is a bit raw, 0.3.0 is safer
+polars>=0.20.0
+tblib>=3.0.0
+
+# wget https://github.com/Dao-AILab/flash-attention/releases/download/v2.6.3/flash_attn-2.6.3+cu123torch2.4cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+# pip uninstall vllm torch -y
+# pip install vllm==0.6.3
+
+# pip install transformers==4.44.2
+# pip install peft==0.12.0
+# pip install torchao==0.3.1
+# pip install vllm==0.6.3 --no-deps
+# pip install torchtune==0.2.1
