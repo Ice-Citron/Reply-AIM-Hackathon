@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prescription Sources Finder | AI Medical Assistant</title>
+  <meta name="description" content="Find prescription sources (hospitals, local clinics, pharmacies, e-commerce, overseas suppliers) for your diagnosed condition." />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/config.js"></script>
+  <style>
+    /* Minimal page-specific utilities (avoid @apply outside build pipeline) */
+    .results-grid { display: grid; gap: 1rem; }
+    @media (min-width: 900px){ .results-grid { grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); } }
+    .collapsible-btn { cursor: pointer; }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+  <header class="glass-morphism-strong sticky top-0 z-40 border-b border-white/20">
+    <div class="container-custom py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="logo w-10 h-10 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+        </div>
+        <div>
+          <div class="font-headline font-bold text-primary text-xl">Prescription Source Finder</div>
+          <div class="text-xs text-success flex items-center gap-1"><span class="w-2 h-2 bg-success rounded-full animate-pulse"></span> Online</div>
+        </div>
+      </div>
+      <a href="landing_page.html" class="btn btn-outline text-sm">Back to Home</a>
+    </div>
+  </header>
+
+  <main class="container-custom py-10 max-w-6xl">
+    <div class="max-w-3xl mb-8">
+      <h1 class="text-3xl font-headline font-bold text-primary mb-3">Find Prescription Sources</h1>
+      <p class="text-text-secondary text-sm leading-relaxed">Already have a diagnosis? Enter your condition and we will gather potential sources for prescriptions and treatments: hospitals, local clinics, pharmacies, e-commerce (e.g. Amazon), and overseas suppliers. Always verify safety, legality, and consult a licensed professional before purchasing or administering any medication.</p>
+    </div>
+
+    <form id="prescriptionForm" class="card-elevated p-6 mb-8 space-y-6">
+      <div>
+        <label class="font-semibold text-sm text-primary mb-1 block">Diagnosed Condition *</label>
+        <input id="conditionInput" type="text" required placeholder="e.g., Type 2 Diabetes, Psoriasis, Hypothyroidism" class="form-input w-full" />
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="font-semibold text-sm text-primary mb-1 block">Country / Region (Optional)</label>
+          <input id="regionInput" type="text" placeholder="e.g., US, UK, Singapore" class="form-input w-full" />
+        </div>
+        <div>
+          <label class="font-semibold text-sm text-primary mb-1 block">Medication / Active Ingredient (Optional)</label>
+          <input id="medicationInput" type="text" placeholder="e.g., Metformin, Levothyroxine" class="form-input w-full" />
+        </div>
+        <div>
+          <label class="font-semibold text-sm text-primary mb-1 block">Max Results Per Category</label>
+          <select id="limitSelect" class="form-input w-full">
+            <option value="5">5</option>
+            <option value="8" selected>8</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-4 items-center">
+        <button type="submit" id="searchBtn" class="btn btn-primary px-8 flex items-center gap-3">
+          <span id="searchBtnText">Search Sources</span>
+          <div id="searchSpinner" class="hidden w-5 h-5 border-2 border-white/30 border-t-accent rounded-full animate-spin"></div>
+        </button>
+        <button type="button" id="resetBtn" class="btn btn-outline px-6">Reset</button>
+        <div class="text-xs text-text-tertiary flex items-center gap-1">Model: <code>o3-mini</code></div>
+      </div>
+      <div class="text-xs text-text-tertiary"><strong>Disclaimer:</strong> This tool suggests potential sources. It does not prescribe or endorse specific medications. Verify legitimacy, pricing, and prescription requirements yourself.</div>
+    </form>
+
+    <div id="errorBanner" class="hidden mb-6 p-4 bg-error-50 border-2 border-error rounded-2xl text-sm text-error-700"></div>
+
+    <div id="filtersBar" class="hidden mb-6 glass-morphism rounded-2xl p-4 flex flex-wrap gap-4 items-center">
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-semibold text-primary">Filter Category:</label>
+        <select id="categoryFilter" class="form-input text-sm w-48">
+          <option value="all" selected>All</option>
+          <option value="hospitals">Hospitals</option>
+          <option value="local_clinics">Local Clinics</option>
+          <option value="pharmacies">Pharmacies</option>
+          <option value="ecommerce">E-Commerce</option>
+          <option value="overseas_suppliers">Overseas Suppliers</option>
+        </select>
+      </div>
+      <button id="regenerateBtn" class="btn btn-outline text-sm px-6">Regenerate</button>
+    </div>
+
+    <div id="resultsContainer" class="hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-headline font-bold text-primary mb-2">Results</h2>
+        <p id="resultsSummary" class="text-sm text-text-secondary"></p>
+      </div>
+      <div id="categoriesWrapper" class="space-y-8"></div>
+    </div>
+  </main>
+
+  <footer class="glass-morphism-strong border-t border-white/20 mt-16 py-8">
+    <div class="container-custom text-center text-text-secondary text-xs">
+      <p>&copy; 2025 AI Medical Assistant. Not a substitute for professional medical advice.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Ensure API_CONFIG with OPENAI_API_KEY is loaded from config.js
+    // SECURITY NOTE: For production, route OpenAI calls through a backend proxy to avoid exposing raw keys.
+    const FORM = document.getElementById('prescriptionForm');
+    const conditionInput = document.getElementById('conditionInput');
+    const regionInput = document.getElementById('regionInput');
+    const medicationInput = document.getElementById('medicationInput');
+    const limitSelect = document.getElementById('limitSelect');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchBtnText = document.getElementById('searchBtnText');
+    const searchSpinner = document.getElementById('searchSpinner');
+    const errorBanner = document.getElementById('errorBanner');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const categoriesWrapper = document.getElementById('categoriesWrapper');
+    const resultsSummary = document.getElementById('resultsSummary');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const filtersBar = document.getElementById('filtersBar');
+    const regenerateBtn = document.getElementById('regenerateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let lastQueryPayload = null;
+    let currentData = null;
+
+    FORM.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      const condition = conditionInput.value.trim();
+      if(!condition) { showError('Condition is required.'); return; }
+      const region = regionInput.value.trim();
+      const medication = medicationInput.value.trim();
+      const limit = parseInt(limitSelect.value,10);
+      lastQueryPayload = { condition, region, medication, limit };
+      await fetchSources(false);
+    });
+
+    regenerateBtn.addEventListener('click', () => fetchSources(true));
+    resetBtn.addEventListener('click', () => {
+      FORM.reset();
+      categoriesWrapper.innerHTML='';
+      resultsContainer.classList.add('hidden');
+      filtersBar.classList.add('hidden');
+      hideError();
+      currentData = null;
+    });
+
+    categoryFilter.addEventListener('change', () => {
+      renderCategories(currentData);
+    });
+
+    async function fetchSources(isRegenerate){
+      if(!API_CONFIG?.OPENAI_API_KEY){ showError('Missing OPENAI_API_KEY in config.js'); return; }
+      if(!lastQueryPayload){ showError('No previous query to regenerate.'); return; }
+      setLoading(true, isRegenerate ? 'Regenerating...' : 'Searching...');
+      try {
+        const sysPrompt = `You are an AI that returns ONLY valid JSON (no markdown) describing categorized prescription/treatment acquisition sources for a diagnosed medical condition. Categories: hospitals, local_clinics, pharmacies, ecommerce, overseas_suppliers. Each category is an array of objects with keys: name, sourceType (one of hospital|clinic|pharmacy|ecommerce|overseas), address, country, website, contact, estimatedCostRange, prescriptionRequired (boolean), availabilityNotes, reliabilityScore (1-5 integer), shippingOptions (if ecommerce/overseas). Provide realistic, safety-conscious global examples. Limited to ${lastQueryPayload.limit} items per category. Avoid recommending unapproved or unsafe sources; prefer legitimate providers. If medication provided, tailor sources. Region filter narrows preferred countries. JSON root object shape: {"query": {"condition": string, "medication": string|null, "region": string|null}, "categories": {"hospitals":[],"local_clinics":[],"pharmacies":[],"ecommerce":[],"overseas_suppliers":[]}}`;
+        const userPrompt = `Condition: ${lastQueryPayload.condition}\nMedication: ${lastQueryPayload.medication||'N/A'}\nRegion: ${lastQueryPayload.region||'Global'}\nReturn JSON now.`;
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${API_CONFIG.OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4-turbo-preview',
+            temperature: 0.7,
+            max_tokens: 3000,
+            messages: [
+              { role: 'system', content: sysPrompt },
+              { role: 'user', content: userPrompt }
+            ]
+          })
+        });
+
+        if(!response.ok){ throw new Error(`OpenAI error ${response.status}`); }
+        const data = await response.json();
+        let raw = data.choices?.[0]?.message?.content?.trim() || '';
+        raw = stripCodeFences(raw);
+        const jsonSlice = extractJson(raw);
+        const parsed = JSON.parse(jsonSlice);
+        validateStructure(parsed);
+        currentData = parsed;
+        resultsSummary.textContent = buildSummary(parsed);
+        renderCategories(parsed);
+        resultsContainer.classList.remove('hidden');
+        filtersBar.classList.remove('hidden');
+      } catch(err){
+        console.error(err);
+        // Fallback mock data
+        currentData = buildMockData(lastQueryPayload.condition, lastQueryPayload.medication);
+        resultsSummary.textContent = 'Showing mock data due to API error.';
+        renderCategories(currentData);
+        resultsContainer.classList.remove('hidden');
+        filtersBar.classList.remove('hidden');
+        showError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function setLoading(isLoading, text){
+      if(isLoading){
+        searchBtn.disabled = true;
+        searchBtnText.textContent = text;
+        searchSpinner.classList.remove('hidden');
+      } else {
+        searchBtn.disabled = false;
+        searchBtnText.textContent = 'Search Sources';
+        searchSpinner.classList.add('hidden');
+      }
+    }
+
+    function showError(msg){ errorBanner.textContent = msg; errorBanner.classList.remove('hidden'); }
+    function hideError(){ errorBanner.classList.add('hidden'); errorBanner.textContent=''; }
+
+    function stripCodeFences(str){
+      return str.replace(/```json\n?/gi,'').replace(/```/g,'').trim();
+    }
+
+    function extractJson(str){
+      const match = str.match(/\{[\s\S]*\}$/); // last object
+      if(match) return match[0];
+      return str; // assume already pure JSON
+    }
+
+    function validateStructure(obj){
+      if(!obj.categories) throw new Error('Missing categories field in response JSON');
+      ['hospitals','local_clinics','pharmacies','ecommerce','overseas_suppliers'].forEach(k=>{ if(!obj.categories[k]) obj.categories[k]=[]; });
+    }
+
+    function buildSummary(obj){
+      const counts = Object.entries(obj.categories).map(([k,v])=>`${k}: ${v.length}`).join(' | ');
+      return `Condition: ${obj.query?.condition || 'N/A'} | ${counts}`;
+    }
+
+    function reliabilityBadge(score){
+      if(score>=4) return '<span class="badge-success badge">High '+score+'/5</span>';
+      if(score===3) return '<span class="badge badge-glass">Med '+score+'/5</span>';
+      return '<span class="badge badge-glass text-accent">Low '+score+'/5</span>';
+    }
+
+    function renderCategories(data){
+      if(!data){ return; }
+      const filter = categoryFilter.value;
+      categoriesWrapper.innerHTML='';
+      const ordered = ['hospitals','local_clinics','pharmacies','ecommerce','overseas_suppliers'];
+      ordered.forEach(cat => {
+        if(filter!=='all' && filter!==cat) return;
+        const items = data.categories[cat]||[];
+        const section = document.createElement('section');
+        section.className='';
+        section.innerHTML = `
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xl font-semibold text-primary">${titleFor(cat)} <span class="text-text-tertiary text-sm">(${items.length})</span></h3>
+            <button class="collapsible-btn text-xs text-text-tertiary hover:text-primary transition-colors" data-target="${cat}">Toggle</button>
+          </div>
+          <div id="${cat}-content" class="results-grid"></div>
+        `;
+        categoriesWrapper.appendChild(section);
+        const contentDiv = section.querySelector(`#${cat}-content`);
+        items.forEach(item => contentDiv.appendChild(buildSourceCard(item)));
+      });
+      categoriesWrapper.querySelectorAll('.collapsible-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target')+'-content';
+          const el = document.getElementById(targetId);
+          if(!el) return;
+          el.classList.toggle('hidden');
+        });
+      });
+    }
+
+    function buildSourceCard(item){
+      const div = document.createElement('div');
+      div.className='card-elevated p-5 flex flex-col gap-3';
+      const presc = item.prescriptionRequired ? '<span class="badge badge-glass text-primary">Rx Required</span>' : '<span class="badge badge-glass text-accent">May be OTC</span>';
+      div.innerHTML = `
+        <div class="flex items-start justify-between gap-4">
+          <h4 class="font-semibold text-primary text-sm leading-snug">${escapeHtml(item.name)}</h4>
+          <div class="flex flex-wrap gap-2 text-[10px]">${presc} ${reliabilityBadge(item.reliabilityScore||0)} <span class="badge badge-glass">${escapeHtml(item.sourceType)}</span></div>
+        </div>
+        ${item.availabilityNotes ? `<p class="text-xs text-text-secondary">${escapeHtml(item.availabilityNotes)}</p>`:''}
+        <div class="text-[11px] space-y-1 text-text-tertiary">
+          ${item.address?`<div><strong class="text-text-primary">Address:</strong> ${escapeHtml(item.address)}</div>`:''}
+          ${item.country?`<div><strong class="text-text-primary">Country:</strong> ${escapeHtml(item.country)}</div>`:''}
+          ${item.estimatedCostRange?`<div><strong class="text-text-primary">Cost Range:</strong> ${escapeHtml(item.estimatedCostRange)}</div>`:''}
+          ${item.shippingOptions?`<div><strong class="text-text-primary">Shipping:</strong> ${escapeHtml(item.shippingOptions)}</div>`:''}
+          ${item.contact?`<div><strong class="text-text-primary">Contact:</strong> ${escapeHtml(item.contact)}</div>`:''}
+          ${item.website?`<div><a class="text-accent underline" target="_blank" rel="noopener" href="${escapeAttr(item.website)}">Website</a></div>`:''}
+        </div>`;
+      return div;
+    }
+
+    function titleFor(cat){
+      switch(cat){
+        case 'local_clinics': return 'Local Clinics';
+        case 'overseas_suppliers': return 'Overseas Suppliers';
+        case 'ecommerce': return 'E-Commerce';
+        default: return cat.charAt(0).toUpperCase()+cat.slice(1).replace('_',' ');
+      }
+    }
+
+    function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
+    function escapeAttr(str){ return (str||'').replace(/"/g,'&quot;'); }
+
+    function buildMockData(condition, medication){
+      return {
+        query:{condition, medication: medication||null, region:null},
+        categories:{
+          hospitals:[{name:'Metropolitan Medical Center',sourceType:'hospital',address:'123 Health Ave, New York, NY',country:'US',website:'https://example-hospital.org',contact:'(555) 123-4567',estimatedCostRange:'$150-$400 consultation',prescriptionRequired:true,availabilityNotes:'Offers specialist consultations for '+condition, reliabilityScore:4}],
+          local_clinics:[{name:'Downtown Family Clinic',sourceType:'clinic',address:'45 Wellness Rd, New York, NY',country:'US',website:'https://familyclinic.example',contact:'(555) 222-1111',estimatedCostRange:'$80-$180 visit',prescriptionRequired:true,availabilityNotes:'Primary care & routine follow-up', reliabilityScore:4}],
+          pharmacies:[{name:'Neighborhood Pharmacy',sourceType:'pharmacy',address:'88 Pharmacy St, New York, NY',country:'US',website:'https://pharmacy.example',contact:'(555) 333-1212',estimatedCostRange:'Varies by medication',prescriptionRequired:true,availabilityNotes:'Can fill standard prescriptions for '+(medication||'common meds'), reliabilityScore:5}],
+          ecommerce:[{name:'Amazon Pharmacy',sourceType:'ecommerce',address:'Online',country:'US',website:'https://pharmacy.amazon.com',contact:'Online Support',estimatedCostRange:'Competitive pricing',prescriptionRequired:true,availabilityNotes:'Requires valid US prescription',shippingOptions:'Standard & expedited', reliabilityScore:4}],
+          overseas_suppliers:[{name:'GlobalMeds Direct',sourceType:'overseas',address:'Online International',country:'CA',website:'https://globalmeds.example',contact:'Intl Support',estimatedCostRange:'10-30% below US price',prescriptionRequired: true,availabilityNotes:'International fulfillment; verify legality',shippingOptions:'International tracked', reliabilityScore:3}]
+        }
+      };
+    }
+  </script>
+</body>
+</html>
