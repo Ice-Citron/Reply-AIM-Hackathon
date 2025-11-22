@@ -1,3 +1,7 @@
+# Secret Config for API key files
+secretsConfig.py
+CHANGES.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
