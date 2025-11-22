@@ -38,6 +38,20 @@
             right: 0;
         }
 
+        /* Tab styles */
+        .tab-btn.active {
+            color: #4a90e2;
+            border-bottom-color: #4a90e2;
+        }
+
+        .search-section {
+            display: block;
+        }
+
+        .search-section.hidden {
+            display: none;
+        }
+
         /* Map overlay styles */
         .map-overlay {
             position: fixed;
@@ -270,11 +284,23 @@
 
         <!-- Panel Body -->
         <div class="p-6">
-            <p class="text-text-secondary mb-6">
-                Find nearby medical clinics with pricing information for your treatment needs.
-            </p>
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-6 border-b border-white/20">
+                <button id="localTabBtn" class="tab-btn active px-4 py-2 font-semibold text-primary border-b-2 border-primary transition-colors">
+                    Local Search
+                </button>
+                <button id="internationalTabBtn" class="tab-btn px-4 py-2 font-semibold text-text-tertiary border-b-2 border-transparent hover:text-primary transition-colors">
+                    International Search
+                </button>
+            </div>
 
-            <!-- Search Form -->
+            <!-- Local Search Section -->
+            <div id="localSearchSection" class="search-section">
+                <p class="text-text-secondary mb-6">
+                    Find nearby medical clinics with pricing information for your treatment needs.
+                </p>
+
+                <!-- Search Form -->
             <div class="space-y-4 mb-6">
                 <div>
                     <label class="block text-sm font-semibold text-primary mb-2">
@@ -344,7 +370,91 @@
                             </p>
                         </div>
                     </div>
+                </div>
+            <!-- End Local Search Section -->
+
+            <!-- International Search Section -->
+            <div id="internationalSearchSection" class="search-section hidden">
+                <p class="text-text-secondary mb-6">
+                    Compare medical treatment prices worldwide, including flight costs and travel time.
+                </p>
+
+                <!-- International Search Form -->
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-primary mb-2">
+                            Your Location *
+                        </label>
+                        <input
+                            type="text"
+                            id="internationalOrigin"
+                            placeholder="e.g., New York, NY or London, UK"
+                            class="form-input w-full"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-primary mb-2">
+                            Treatment Type *
+                        </label>
+                        <input
+                            type="text"
+                            id="internationalTreatment"
+                            placeholder="e.g., dental implant, knee surgery, cosmetic procedure"
+                            class="form-input w-full"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    id="findInternationalBtn"
+                    class="btn btn-primary w-full flex items-center justify-center gap-2"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span id="findInternationalText">Search International Options</span>
+                </button>
+
+                <!-- Error Message -->
+                <div id="internationalError" class="hidden mt-4 p-4 bg-error-50 border-2 border-error rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-error flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                        </svg>
+                        <p id="internationalErrorText" class="text-error-700"></p>
+                    </div>
+                </div>
+
+                <!-- Results Container -->
+                <div id="internationalResults" class="hidden mt-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 id="internationalResultsTitle" class="text-xl font-bold text-primary">
+                            International Options
+                        </h3>
+                        <div class="flex gap-2">
+                            <select id="internationalSortBy" class="text-sm px-3 py-1 rounded border border-primary-200 glass-morphism">
+                                <option value="best">Best Match</option>
+                                <option value="price">Lowest Price</option>
+                                <option value="flight">Shortest Flight</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="internationalList" class="space-y-4">
+                        <!-- International clinic cards will be inserted here -->
+                    </div>
+
+                    <div class="mt-6 p-4 glass-morphism rounded-lg border border-white/20">
+                        <p class="text-sm text-text-secondary">
+                            <strong class="text-primary">Medical Tourism Note:</strong> Prices include estimated treatment costs and round-trip flights.
+                            Additional costs may include accommodation, local transportation, and follow-up care. Always verify credentials and
+                            accreditation before traveling for medical procedures.
+                        </p>
+                    </div>
+                </div>
             </div>
+            <!-- End International Search Section -->
 
             <!-- Panel Footer -->
             <div class="sticky bottom-0 glass-morphism border-t border-white/20 px-6 py-4">
@@ -399,6 +509,12 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if continuing from landing page demo
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('continue') === 'true') {
+                loadSavedConversation();
+            }
+
             // Focus input
             messageInput.focus();
 
@@ -512,13 +628,15 @@
             const lowerMessage = message.toLowerCase();
 
             if (lowerMessage.includes('headache') || lowerMessage.includes('head')) {
-                return "I understand you're experiencing headaches. Headaches can have many causes including:\n\n• Tension or stress\n• Dehydration\n• Eye strain\n• Lack of sleep\n• Certain foods or medications\n\nFor relief, you might try:\n• Drinking plenty of water\n• Resting in a quiet, dark room\n• Applying a cold compress\n• Taking over-the-counter pain relief (as directed)\n\nIf headaches are severe, persistent, or accompanied by other symptoms like vision changes, fever, or neck stiffness, please consult a healthcare provider immediately.";
+                return "Headaches can have various causes including tension, dehydration, or lack of sleep. For tension headaches, try rest, hydration, and over-the-counter pain relievers. If headaches are severe, frequent, or accompanied by other symptoms like vision changes, please consult a healthcare provider.";
             } else if (lowerMessage.includes('fever') || lowerMessage.includes('temperature')) {
-                return "A fever is generally defined as a body temperature above 100.4°F (38°C). Common causes include:\n\n• Viral or bacterial infections\n• Inflammatory conditions\n• Heat exhaustion\n• Certain medications\n\nRecommendations:\n• Stay hydrated with plenty of fluids\n• Rest\n• Use fever reducers like acetaminophen or ibuprofen (as directed)\n• Dress in light clothing\n\nSeek immediate medical attention if fever is:\n• Above 103°F (39.4°C)\n• Lasting more than 3 days\n• Accompanied by severe symptoms like difficulty breathing, chest pain, or confusion";
-            } else if (lowerMessage.includes('fatigue') || lowerMessage.includes('tired')) {
-                return "Chronic fatigue can stem from various factors:\n\n• Insufficient sleep or poor sleep quality\n• Anemia or nutritional deficiencies\n• Thyroid problems\n• Depression or anxiety\n• Chronic conditions like diabetes or heart disease\n\nSteps to address fatigue:\n• Maintain a regular sleep schedule (7-9 hours)\n• Exercise regularly\n• Eat a balanced diet\n• Manage stress\n• Limit caffeine and alcohol\n\nIf fatigue persists despite lifestyle changes, consider getting blood work done to check for underlying conditions.";
+                return "A fever is usually a sign your body is fighting an infection. For adults, a temperature above 100.4°F (38°C) is considered a fever. Stay hydrated, rest, and consider acetaminophen or ibuprofen to reduce fever. Seek medical attention if fever exceeds 103°F, lasts more than 3 days, or is accompanied by severe symptoms.";
+            } else if (lowerMessage.includes('cough') || lowerMessage.includes('cold')) {
+                return "Coughs can be caused by viral infections, allergies, or irritants. For a common cold-related cough: stay hydrated, use honey (for adults), rest well, and consider a humidifier. If the cough persists beyond 3 weeks, worsens, or includes blood, please see a doctor.";
+            } else if (lowerMessage.includes('diabetes') || lowerMessage.includes('blood sugar')) {
+                return "Diabetes management involves monitoring blood sugar levels, maintaining a healthy diet, regular exercise, and taking prescribed medications. If you're experiencing symptoms like increased thirst, frequent urination, or fatigue, please consult a healthcare provider for proper testing and diagnosis.";
             } else {
-                return `Thank you for your question. While I can provide general health information, I recommend consulting with a healthcare professional for personalized medical advice about: "${message}"\n\nIn the meantime, here are some general tips:\n• Keep track of your symptoms (when they started, severity, triggers)\n• Stay hydrated and maintain a healthy diet\n• Get adequate rest\n• Avoid self-diagnosis and self-medication without professional guidance\n\nIs there anything specific about your symptoms or concerns you'd like to discuss?`;
+                return "Thank you for your question! While I can provide general health information, I recommend consulting with a healthcare professional for personalized medical advice. They can properly evaluate your specific situation and provide appropriate guidance. Is there anything else I can help you with?";
             }
         }
 
@@ -610,11 +728,39 @@
             hideError();
         }
 
+        // Load saved conversation from localStorage
+        function loadSavedConversation() {
+            try {
+                const savedHistory = localStorage.getItem('chatHistory');
+                if (savedHistory) {
+                    const history = JSON.parse(savedHistory);
+
+                    // Hide welcome card
+                    welcomeCard.style.display = 'none';
+
+                    // Load messages
+                    history.forEach(msg => {
+                        addMessage(msg.content, msg.role);
+                        conversationHistory.push(msg);
+                    });
+
+                    // Clear localStorage after loading
+                    localStorage.removeItem('chatHistory');
+
+                    // Scroll to bottom
+                    scrollToBottom();
+                }
+            } catch (error) {
+                console.error('Error loading saved conversation:', error);
+            }
+        }
+
         // Expose for debugging
         window.chatDebug = {
             clearChat,
             conversationHistory,
-            addMessage
+            addMessage,
+            loadSavedConversation
         };
 
         // ===== CLINIC FINDER MODAL =====
@@ -1304,6 +1450,292 @@ Return data for ALL clinics in the same order. Generate realistic estimates base
 
         function hideClinicError() {
             clinicError.classList.add('hidden');
+        }
+
+        // ===== TAB SWITCHING =====
+
+        const localTabBtn = document.getElementById('localTabBtn');
+        const internationalTabBtn = document.getElementById('internationalTabBtn');
+        const localSearchSection = document.getElementById('localSearchSection');
+        const internationalSearchSection = document.getElementById('internationalSearchSection');
+
+        localTabBtn.addEventListener('click', () => {
+            // Switch to local tab
+            localTabBtn.classList.add('active', 'border-primary', 'text-primary');
+            localTabBtn.classList.remove('text-text-tertiary', 'border-transparent');
+
+            internationalTabBtn.classList.remove('active', 'border-primary', 'text-primary');
+            internationalTabBtn.classList.add('text-text-tertiary', 'border-transparent');
+
+            localSearchSection.classList.remove('hidden');
+            internationalSearchSection.classList.add('hidden');
+        });
+
+        internationalTabBtn.addEventListener('click', () => {
+            // Switch to international tab
+            internationalTabBtn.classList.add('active', 'border-primary', 'text-primary');
+            internationalTabBtn.classList.remove('text-text-tertiary', 'border-transparent');
+
+            localTabBtn.classList.remove('active', 'border-primary', 'text-primary');
+            localTabBtn.classList.add('text-text-tertiary', 'border-transparent');
+
+            internationalSearchSection.classList.remove('hidden');
+            localSearchSection.classList.add('hidden');
+        });
+
+        // ===== INTERNATIONAL SEARCH =====
+
+        const findInternationalBtn = document.getElementById('findInternationalBtn');
+        const findInternationalText = document.getElementById('findInternationalText');
+        const internationalOrigin = document.getElementById('internationalOrigin');
+        const internationalTreatment = document.getElementById('internationalTreatment');
+        const internationalError = document.getElementById('internationalError');
+        const internationalErrorText = document.getElementById('internationalErrorText');
+        const internationalResults = document.getElementById('internationalResults');
+        const internationalList = document.getElementById('internationalList');
+        const internationalSortBy = document.getElementById('internationalSortBy');
+        const internationalResultsTitle = document.getElementById('internationalResultsTitle');
+
+        let internationalData = [];
+        let isLoadingInternational = false;
+        let currentSort = 'best';
+
+        // Popular medical tourism destinations with typical characteristics
+        const medicalTourismDestinations = [
+            { country: 'Mexico', city: 'Tijuana', priceMultiplier: 0.4, avgFlightHours: 3, avgFlightPrice: 350 },
+            { country: 'Costa Rica', city: 'San Jose', priceMultiplier: 0.5, avgFlightHours: 4, avgFlightPrice: 450 },
+            { country: 'Thailand', city: 'Bangkok', priceMultiplier: 0.35, avgFlightHours: 18, avgFlightPrice: 900 },
+            { country: 'India', city: 'Mumbai', priceMultiplier: 0.25, avgFlightHours: 16, avgFlightPrice: 850 },
+            { country: 'Turkey', city: 'Istanbul', priceMultiplier: 0.45, avgFlightHours: 12, avgFlightPrice: 700 },
+            { country: 'Colombia', city: 'Medellin', priceMultiplier: 0.4, avgFlightHours: 5, avgFlightPrice: 400 },
+            { country: 'Malaysia', city: 'Kuala Lumpur', priceMultiplier: 0.4, avgFlightHours: 20, avgFlightPrice: 950 },
+            { country: 'Poland', city: 'Warsaw', priceMultiplier: 0.5, avgFlightHours: 10, avgFlightPrice: 600 },
+            { country: 'Hungary', city: 'Budapest', priceMultiplier: 0.45, avgFlightHours: 11, avgFlightPrice: 650 },
+            { country: 'South Korea', city: 'Seoul', priceMultiplier: 0.6, avgFlightHours: 14, avgFlightPrice: 800 }
+        ];
+
+        // Base treatment prices in USD (US prices)
+        const baseTreatmentPrices = {
+            'dental': 2500,
+            'cosmetic': 8000,
+            'surgery': 15000,
+            'knee': 35000,
+            'hip': 40000,
+            'cardiac': 75000,
+            'ivf': 12000,
+            'lasik': 2000,
+            'implant': 3000,
+            'default': 5000
+        };
+
+        function estimateBaseTreatmentPrice(treatment) {
+            const lowerTreatment = treatment.toLowerCase();
+            for (const [key, price] of Object.entries(baseTreatmentPrices)) {
+                if (lowerTreatment.includes(key)) {
+                    return price;
+                }
+            }
+            return baseTreatmentPrices.default;
+        }
+
+        findInternationalBtn.addEventListener('click', findInternationalOptions);
+
+        internationalOrigin.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isLoadingInternational) {
+                findInternationalOptions();
+            }
+        });
+
+        internationalTreatment.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isLoadingInternational) {
+                findInternationalOptions();
+            }
+        });
+
+        internationalSortBy.addEventListener('change', () => {
+            currentSort = internationalSortBy.value;
+            displayInternationalResults();
+        });
+
+        async function findInternationalOptions() {
+            const origin = internationalOrigin.value.trim();
+            const treatment = internationalTreatment.value.trim();
+
+            if (!origin || !treatment) {
+                showInternationalError('Please enter both your location and treatment type');
+                return;
+            }
+
+            isLoadingInternational = true;
+            setInternationalButtonState('Searching international options...');
+            hideInternationalError();
+            internationalResults.classList.add('hidden');
+            internationalData = [];
+
+            try {
+                // Estimate base treatment price (US price)
+                const baseTreatmentPrice = estimateBaseTreatmentPrice(treatment);
+
+                // Generate international options
+                internationalData = medicalTourismDestinations.map(dest => {
+                    const treatmentPrice = Math.round(baseTreatmentPrice * dest.priceMultiplier);
+                    const flightPrice = dest.avgFlightPrice;
+                    const totalCost = treatmentPrice + flightPrice;
+                    const flightHours = dest.avgFlightHours;
+
+                    // Calculate best match score (lower is better)
+                    // Weighted combination: 70% price, 30% flight time
+                    const priceScore = totalCost / 100; // Normalize
+                    const timeScore = flightHours * 50; // Give flight time significant weight
+                    const bestMatchScore = (priceScore * 0.7) + (timeScore * 0.3);
+
+                    return {
+                        country: dest.country,
+                        city: dest.city,
+                        treatmentPrice,
+                        flightPrice,
+                        totalCost,
+                        flightHours,
+                        bestMatchScore,
+                        clinicName: `${dest.city} International Medical Center`,
+                        specialty: treatment,
+                        accreditation: 'JCI Accredited',
+                        currency: 'USD'
+                    };
+                });
+
+                displayInternationalResults();
+
+            } catch (error) {
+                console.error('Error finding international options:', error);
+                showInternationalError('Failed to find international options. Please try again.');
+            } finally {
+                isLoadingInternational = false;
+                setInternationalButtonState('Search International Options');
+            }
+        }
+
+        function displayInternationalResults() {
+            let sortedData = [...internationalData];
+
+            // Apply sorting
+            if (currentSort === 'price') {
+                sortedData.sort((a, b) => a.totalCost - b.totalCost);
+            } else if (currentSort === 'flight') {
+                sortedData.sort((a, b) => a.flightHours - b.flightHours);
+            } else { // 'best' match
+                sortedData.sort((a, b) => a.bestMatchScore - b.bestMatchScore);
+            }
+
+            internationalResultsTitle.textContent = `${sortedData.length} International Options`;
+
+            internationalList.innerHTML = sortedData.map((option, index) => {
+                const savings = estimateBaseTreatmentPrice(internationalTreatment.value.trim()) - option.totalCost;
+                const savingsPercent = Math.round((savings / estimateBaseTreatmentPrice(internationalTreatment.value.trim())) * 100);
+
+                return `
+                <div class="card-elevated hover:shadow-lg transition-shadow">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h4 class="text-lg font-semibold text-primary">${escapeHtml(option.country)}</h4>
+                                ${index === 0 && currentSort === 'best' ? `
+                                <span class="px-2 py-1 bg-success-100 text-success-700 rounded text-xs font-bold">
+                                    BEST MATCH
+                                </span>
+                                ` : ''}
+                            </div>
+
+                            <div class="space-y-2 text-sm text-text-secondary mb-3">
+                                <p class="font-medium text-primary">${escapeHtml(option.clinicName)}</p>
+
+                                <p class="flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span>${escapeHtml(option.city)}, ${escapeHtml(option.country)}</span>
+                                </p>
+
+                                <div class="flex items-center gap-4 mt-2">
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                        </svg>
+                                        <span class="font-medium text-primary">${option.flightHours}h flight</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                        </svg>
+                                        <span class="font-medium text-primary">$${option.flightPrice.toLocaleString()} flight</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="inline-block px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs font-medium">
+                                        ${escapeHtml(option.accreditation)}
+                                    </span>
+                                    <span class="inline-block px-2 py-1 bg-success-100 text-success-700 rounded text-xs font-medium">
+                                        ${escapeHtml(option.specialty)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            ${savings > 0 ? `
+                            <div class="mt-3 p-3 bg-success-50 border border-success-200 rounded-lg">
+                                <p class="text-sm font-semibold text-success-700">
+                                    💰 Save $${savings.toLocaleString()} (${savingsPercent}%) vs US treatment
+                                </p>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex-shrink-0 text-right">
+                            <div class="glass-morphism border-2 border-primary rounded-lg px-4 py-3 mb-2">
+                                <div class="text-xs text-text-tertiary mb-1">Total Cost</div>
+                                <div class="flex items-center gap-1 text-primary font-bold text-xl">
+                                    <span>$${option.totalCost.toLocaleString()}</span>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-text-secondary space-y-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span>Treatment:</span>
+                                    <span class="font-medium">$${option.treatmentPrice.toLocaleString()}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span>Flight:</span>
+                                    <span class="font-medium">$${option.flightPrice.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            internationalResults.classList.remove('hidden');
+        }
+
+        function setInternationalButtonState(text) {
+            findInternationalText.textContent = text;
+            findInternationalBtn.disabled = isLoadingInternational;
+
+            if (findInternationalBtn.disabled) {
+                findInternationalBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                findInternationalBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function showInternationalError(message) {
+            internationalErrorText.textContent = message;
+            internationalError.classList.remove('hidden');
+        }
+
+        function hideInternationalError() {
+            internationalError.classList.add('hidden');
         }
     </script>
 
