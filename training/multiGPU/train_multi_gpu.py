@@ -327,8 +327,8 @@ async def main():
     model_config = config_multi_gpu.get_model_config()
     print(f"Model: {model_config['base_model']}")
     print(f"   - Tensor Parallel: {model_config['_internal_config']['engine_args']['tensor_parallel_size']}")
-    print(f"   - GPU Memory: {model_config['_internal_config']['init_args']['gpu_memory_utilization']}")
-    print(f"   - 4-bit: {model_config['_internal_config']['init_args']['load_in_4bit']}")
+    print(f"   - GPU Memory: {model_config['_internal_config']['engine_args']['gpu_memory_utilization']}")
+    print(f"   - Backend: TorchTune ({model_config['_internal_config']['torchtune_args']['model']})")
 
     model = art.TrainableModel(**model_config)
     await model.register(backend)
