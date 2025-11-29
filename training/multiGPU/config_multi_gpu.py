@@ -25,16 +25,17 @@ MULTI_GPU_CONFIG = {
     "base_model": BASE_MODEL,
     "model_name": f"legal-agent-l40s-{NUM_GPUS}gpu",
 
-    # ART internal configuration for multi-GPU
+    # ART internal configuration for multi-GPU with TorchTune backend
+    # TorchTune is required for tensor parallelism > 1 with 14B+ models
     "_internal_config": {
         "engine_args": {
             "tensor_parallel_size": NUM_GPUS,  # Multi-GPU tensor parallelism
-            "enable_sleep_mode": False,  # Disable for multi-GPU
+            "gpu_memory_utilization": 0.75,  # Conservative for stability
         },
-        "init_args": {
-            "gpu_memory_utilization": 0.85,  # Can be higher with full model across 8 GPUs
-            "max_seq_length": 8192,
-            "load_in_4bit": False,  # Full precision for tensor parallelism
+        "torchtune_args": {
+            "model": "qwen2_5_14b_instruct",  # TorchTune model identifier
+            "model_type": "QWEN2",  # Model architecture type
+            "async_weight_syncing": True,  # Async weight sync for efficiency
         },
         "peft_args": {
             "r": TRAINING_PARAMS["lora_rank"],
@@ -61,7 +62,7 @@ MULTI_GPU_CONFIG = {
 
     # GPU Settings (for helper functions)
     "tensor_parallel_size": NUM_GPUS,
-    "gpu_memory_utilization": 0.85,
+    "gpu_memory_utilization": 0.75,
     "max_model_len": 8192,
 }
 
