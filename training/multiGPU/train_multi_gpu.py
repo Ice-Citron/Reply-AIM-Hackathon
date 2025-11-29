@@ -334,13 +334,17 @@ async def main():
     await model.register(backend)
     print(f"Model registered\n")
 
-    # Initialize W&B
+    # Initialize W&B (let wandb auto-generate unique run names like "moonshine-1")
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
         config=config_multi_gpu.MULTI_GPU_CONFIG,
+        # No name= parameter, so W&B auto-generates unique names
+        tags=["multi-gpu", "l40s", "qwen2.5-14b", "legal-agent"],
+        notes=f"Multi-GPU training on {config_multi_gpu.NUM_GPUS}x L40S GPUs",
     )
-    print(f"W&B: {run.url}\n")
+    print(f"W&B Run: {run.name}")
+    print(f"W&B URL: {run.url}\n")
 
     # Training iterator
     cfg = config_multi_gpu.MULTI_GPU_CONFIG
@@ -376,14 +380,16 @@ async def main():
         # Judge
         judged_groups = [await gemini_judge(g) for g in finished_groups]
 
-        # Log metrics
+        # Log metrics to W&B
         all_rewards = [t.reward for g in judged_groups for t in g.trajectories]
+        avg_reward = sum(all_rewards) / len(all_rewards) if all_rewards else 0.0
         wandb.log({
-            "step": step_count,
-            "avg_reward": sum(all_rewards) / len(all_rewards),
-            "max_reward": max(all_rewards),
-            "min_reward": min(all_rewards),
-        })
+            "train/avg_reward": avg_reward,
+            "train/max_reward": max(all_rewards) if all_rewards else 0.0,
+            "train/min_reward": min(all_rewards) if all_rewards else 0.0,
+            "train/num_trajectories": len(all_rewards),
+            "train/epoch": batch.epoch,
+        }, step=step_count)  # Pass step as parameter, not as metric
 
         # Train (config is in _internal_config, just pass empty TrainConfig)
         train_config = art.TrainConfig()
