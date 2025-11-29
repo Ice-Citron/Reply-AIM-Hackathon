@@ -486,7 +486,7 @@ async def main():
         # Judge
         judged_groups = [await gemini_judge(g) for g in finished_groups]
 
-        # Log metrics to W&B
+        # Calculate reward metrics
         all_rewards = [t.reward for g in judged_groups for t in g.trajectories]
 
         if not all_rewards:
@@ -494,27 +494,42 @@ async def main():
             continue
 
         avg_reward = sum(all_rewards) / len(all_rewards)
-        wandb.log({
-            "train/avg_reward": avg_reward,
-            "train/max_reward": max(all_rewards),
-            "train/min_reward": min(all_rewards),
-            "train/num_trajectories": len(all_rewards),
-            "train/epoch": batch.epoch,
-        }, step=step_count)
+        max_reward = max(all_rewards)
+        min_reward = min(all_rewards)
 
-        print(f"  Rewards: avg={avg_reward:.2f}, max={max(all_rewards):.2f}, min={min(all_rewards):.2f}")
+        # Calculate std dev of rewards (matching ART's reward_std_dev calculation)
+        reward_std_dev = 0.0
+        if len(all_rewards) > 1:
+            mean = avg_reward
+            variance = sum((r - mean) ** 2 for r in all_rewards) / len(all_rewards)
+            reward_std_dev = variance ** 0.5
+
+        print(f"  Rewards: avg={avg_reward:.2f}, max={max_reward:.2f}, min={min_reward:.2f}, std={reward_std_dev:.2f}")
 
         # Train (config is in _internal_config, just pass empty TrainConfig)
         train_config = art.TrainConfig()
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 
+        # Log custom metrics AFTER training (so step aligns with ART's internal logging)
+        # ART determines step from checkpoint dirs, which are created during train()
+        # Use step_count + 1 to match ART's post-training step
+        current_step = step_count + 1
+        wandb.log({
+            "train/avg_reward": avg_reward,
+            "train/max_reward": max_reward,
+            "train/min_reward": min_reward,
+            "train/reward_std": reward_std_dev,
+            "train/num_trajectories": len(all_rewards),
+            "train/epoch": batch.epoch,
+        }, step=current_step)
+
         # Run validation every 5 steps
         EVAL_EVERY_N_STEPS = 5
         if (step_count + 1) % EVAL_EVERY_N_STEPS == 0:
-            val_metrics = await evaluate_validation(model, val_scenarios, step_count)
+            val_metrics = await evaluate_validation(model, val_scenarios, current_step)
             if val_metrics:
-                wandb.log(val_metrics, step=step_count)
+                wandb.log(val_metrics, step=current_step)
 
         # Push to HuggingFace every N steps
         if (step_count + 1) % HF_PUSH_EVERY_N_STEPS == 0:
