@@ -32,17 +32,51 @@ from rag_tools.keyword_search import keyword_search
 from rag_tools.read_document import read_document_part
 
 # Import API
-from secretsConfig import oaiKey, wandbKey, openRouterKey
+from secretsConfig import oaiKey, wandbKey, openRouterKey, hfToken
 from openai import AsyncOpenAI
 from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import BaseModel
 from litellm import acompletion
 from textwrap import dedent
+from huggingface_hub import HfApi
 
 # Set environment variables
 os.environ["OPENAI_API_KEY"] = oaiKey
 os.environ["WANDB_API_KEY"] = wandbKey
 os.environ["OPENROUTER_API_KEY"] = openRouterKey
+os.environ["HF_TOKEN"] = hfToken
+
+# HuggingFace config
+HF_REPO_ID = "iteratehack/rlaif-lawcode-sft"
+HF_PUSH_EVERY_N_STEPS = 10
+
+
+# ============================================================
+# HUGGINGFACE UPLOAD
+# ============================================================
+
+def push_checkpoint_to_hf(checkpoint_dir: str, step: int, repo_id: str = HF_REPO_ID):
+    """Push a checkpoint to HuggingFace Hub"""
+    if not os.path.exists(checkpoint_dir):
+        print(f"  Checkpoint dir not found: {checkpoint_dir}")
+        return False
+
+    try:
+        api = HfApi(token=hfToken)
+
+        # Upload the entire checkpoint folder
+        print(f"  Pushing checkpoint step {step} to HF: {repo_id}")
+        api.upload_folder(
+            folder_path=checkpoint_dir,
+            repo_id=repo_id,
+            path_in_repo=f"checkpoints/step-{step:04d}",
+            commit_message=f"Add checkpoint at step {step}",
+        )
+        print(f"  Successfully pushed step {step} to {repo_id}")
+        return True
+    except Exception as e:
+        print(f"  HF push failed: {e}")
+        return False
 
 
 # ============================================================
@@ -319,31 +353,32 @@ async def main():
 
     print(f"✅ Loaded {len(training_scenarios)} scenarios\n")
 
-    # Initialize backend
-    print(f"🔧 Initializing local H100 backend...")
-    backend = config_single_gpu.get_backend()
-
-    # Create model with _internal_config
-    model_config = config_single_gpu.get_model_config()
-    print(f"📦 Model: {model_config['base_model']}")
-    print(f"   - Tensor Parallel: {model_config['_internal_config']['engine_args']['tensor_parallel_size']}")
-    print(f"   - GPU Memory: {model_config['_internal_config']['init_args']['gpu_memory_utilization']}")
-    print(f"   - 4-bit: {model_config['_internal_config']['init_args']['load_in_4bit']}")
-
-    model = art.TrainableModel(**model_config)
-    await model.register(backend)
-    print(f"✅ Model registered\n")
-
-    # Initialize W&B (let wandb auto-generate unique run names)
+    # Initialize W&B FIRST (before model registration to control run name)
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
         config=config_single_gpu.SINGLE_GPU_CONFIG,
         tags=["single-gpu", "h100", "qwen2.5-14b", "legal-agent"],
         notes="Single GPU training on H100",
+        reinit=False,
     )
     print(f"W&B Run: {run.name}")
     print(f"W&B URL: {run.url}\n")
+
+    # Initialize backend
+    print(f"Initializing local H100 backend...")
+    backend = config_single_gpu.get_backend()
+
+    # Create model with _internal_config
+    model_config = config_single_gpu.get_model_config()
+    print(f"Model: {model_config['base_model']}")
+    print(f"   - Tensor Parallel: {model_config['_internal_config']['engine_args']['tensor_parallel_size']}")
+    print(f"   - GPU Memory: {model_config['_internal_config']['init_args']['gpu_memory_utilization']}")
+    print(f"   - 4-bit: {model_config['_internal_config']['init_args']['load_in_4bit']}")
+
+    model = art.TrainableModel(**model_config)
+    await model.register(backend)
+    print(f"Model registered\n")
 
     # Training iterator
     cfg = config_single_gpu.SINGLE_GPU_CONFIG
@@ -381,28 +416,54 @@ async def main():
 
         # Log metrics to W&B
         all_rewards = [t.reward for g in judged_groups for t in g.trajectories]
-        avg_reward = sum(all_rewards) / len(all_rewards) if all_rewards else 0.0
+
+        if not all_rewards:
+            print("  WARNING: No successful rollouts in this step!")
+            continue
+
+        avg_reward = sum(all_rewards) / len(all_rewards)
         wandb.log({
             "train/avg_reward": avg_reward,
-            "train/max_reward": max(all_rewards) if all_rewards else 0.0,
-            "train/min_reward": min(all_rewards) if all_rewards else 0.0,
+            "train/max_reward": max(all_rewards),
+            "train/min_reward": min(all_rewards),
             "train/num_trajectories": len(all_rewards),
             "train/epoch": batch.epoch,
-        }, step=step_count)  # Pass step as parameter, not as metric
+        }, step=step_count)
+
+        print(f"  Rewards: avg={avg_reward:.2f}, max={max(all_rewards):.2f}, min={min(all_rewards):.2f}")
 
         # Train (config is in _internal_config, just pass empty TrainConfig)
         train_config = art.TrainConfig()
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 
-        print(f"✅ Step {step_count} complete\n")
+        # Push to HuggingFace every N steps
+        if (step_count + 1) % HF_PUSH_EVERY_N_STEPS == 0:
+            # Find the latest checkpoint
+            art_dir = Path(".art") / WANDB_CONFIG["project"] / "models" / config_single_gpu.SINGLE_GPU_CONFIG["model_name"] / "checkpoints"
+            if art_dir.exists():
+                checkpoint_dirs = sorted([d for d in art_dir.iterdir() if d.is_dir() and d.name.isdigit()])
+                if checkpoint_dirs:
+                    latest_checkpoint = checkpoint_dirs[-1]
+                    push_checkpoint_to_hf(str(latest_checkpoint), step_count + 1)
+
+        print(f"Step {step_count} complete\n")
 
         step_count += 1
         if step_count >= cfg["max_steps"]:
             break
 
+    # Push final checkpoint to HuggingFace
+    print("Pushing final checkpoint to HuggingFace...")
+    art_dir = Path(".art") / WANDB_CONFIG["project"] / "models" / config_single_gpu.SINGLE_GPU_CONFIG["model_name"] / "checkpoints"
+    if art_dir.exists():
+        checkpoint_dirs = sorted([d for d in art_dir.iterdir() if d.is_dir() and d.name.isdigit()])
+        if checkpoint_dirs:
+            latest_checkpoint = checkpoint_dirs[-1]
+            push_checkpoint_to_hf(str(latest_checkpoint), step_count, repo_id=HF_REPO_ID)
+
     run.finish()
-    print("🎉 Training complete!")
+    print("Training complete!")
 
 
 if __name__ == "__main__":
