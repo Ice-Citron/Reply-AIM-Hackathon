@@ -4,7 +4,7 @@
 # =============================================================================
 
 # Core ART Library
-openpipe-art==0.5.2
+openpipe-art==0.5.3
 
 # Core Dependencies (from ART)
 openai>=1.65.5,<=1.99.1
