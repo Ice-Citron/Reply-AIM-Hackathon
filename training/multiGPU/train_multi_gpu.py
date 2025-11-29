@@ -319,32 +319,39 @@ async def main():
 
     print(f"Loaded {len(training_scenarios)} scenarios\n")
 
-    # Initialize backend
-    print(f"Initializing multi-GPU backend (8x L40S)...")
-    backend = config_multi_gpu.get_backend()
-
-    # Create model with _internal_config
-    model_config = config_multi_gpu.get_model_config()
-    print(f"Model: {model_config['base_model']}")
-    print(f"   - Tensor Parallel: {model_config['_internal_config']['engine_args']['tensor_parallel_size']}")
-    print(f"   - GPU Memory: {model_config['_internal_config']['engine_args']['gpu_memory_utilization']}")
-    print(f"   - Backend: TorchTune ({model_config['_internal_config']['torchtune_args']['model']})")
-
-    model = art.TrainableModel(**model_config)
-    await model.register(backend)
-    print(f"Model registered\n")
-
-    # Initialize W&B (let wandb auto-generate unique run names like "moonshine-1")
+    # Initialize W&B FIRST (before ART model registration)
+    # This ensures we control the run name before ART's internal init
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
         config=config_multi_gpu.MULTI_GPU_CONFIG,
-        # No name= parameter, so W&B auto-generates unique names
         tags=["multi-gpu", "l40s", "qwen2.5-14b", "legal-agent"],
         notes=f"Multi-GPU training on {config_multi_gpu.NUM_GPUS}x L40S GPUs",
+        reinit=False,  # Prevent ART from creating a new run
     )
     print(f"W&B Run: {run.name}")
     print(f"W&B URL: {run.url}\n")
+
+    # Initialize backend
+    print(f"Initializing multi-GPU backend (8x L40S)...")
+    backend = config_multi_gpu.get_backend()
+
+    # Create model, then set _internal_config (per OpenPipe ART pattern)
+    # Reference: ART/dev/tau-bench/run_training.py
+    model_config = config_multi_gpu.get_model_config()
+    internal_config = config_multi_gpu.get_internal_config()
+
+    print(f"Model: {model_config['base_model']}")
+    print(f"   - Tensor Parallel: {internal_config['engine_args']['tensor_parallel_size']}")
+    print(f"   - GPU Memory: {internal_config['engine_args']['gpu_memory_utilization']}")
+    print(f"   - Backend: TorchTune ({internal_config['torchtune_args']['model']})")
+
+    model = art.TrainableModel(**model_config)
+    # Set _internal_config AFTER creating the model (this is the OpenPipe pattern)
+    model._internal_config = internal_config
+
+    await model.register(backend)
+    print(f"Model registered\n")
 
     # Training iterator
     cfg = config_multi_gpu.MULTI_GPU_CONFIG
@@ -380,19 +387,13 @@ async def main():
         # Judge
         judged_groups = [await gemini_judge(g) for g in finished_groups]
 
-        # Log metrics to W&B
+        # Calculate and print metrics (ART logs to W&B internally)
         all_rewards = [t.reward for g in judged_groups for t in g.trajectories]
         avg_reward = sum(all_rewards) / len(all_rewards) if all_rewards else 0.0
-        wandb.log({
-            "train/avg_reward": avg_reward,
-            "train/max_reward": max(all_rewards) if all_rewards else 0.0,
-            "train/min_reward": min(all_rewards) if all_rewards else 0.0,
-            "train/num_trajectories": len(all_rewards),
-            "train/epoch": batch.epoch,
-        }, step=step_count)  # Pass step as parameter, not as metric
+        print(f"  Rewards: avg={avg_reward:.2f}, max={max(all_rewards):.2f}, min={min(all_rewards):.2f}")
 
-        # Train (config is in _internal_config, just pass empty TrainConfig)
-        train_config = art.TrainConfig()
+        # Train with learning rate from config
+        train_config = art.TrainConfig(learning_rate=cfg["learning_rate"])
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 

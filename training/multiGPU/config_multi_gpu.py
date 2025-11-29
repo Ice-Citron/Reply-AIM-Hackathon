@@ -1,6 +1,9 @@
 """
 Multi-GPU Training Configuration
 For training on 8x L40S GPUs with tensor parallelism
+
+Based on OpenPipe ART examples:
+https://github.com/OpenPipe/ART/blob/main/dev/tau-bench/run_training.py
 """
 
 import sys
@@ -14,6 +17,9 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from config.training_config import BASE_MODEL, TRAINING_PARAMS, DATA_PATHS, WANDB_CONFIG
 from config.paths import CHECKPOINTS_DIR
 
+# Import ART dev types for _internal_config
+import art.dev
+
 # ============================================================
 # MULTI-GPU CONFIGURATION (8x L40S)
 # ============================================================
@@ -24,29 +30,6 @@ MULTI_GPU_CONFIG = {
     # Model
     "base_model": BASE_MODEL,
     "model_name": f"legal-agent-l40s-{NUM_GPUS}gpu",
-
-    # ART internal configuration for multi-GPU with TorchTune backend
-    # TorchTune is required for tensor parallelism > 1 with 14B+ models
-    "_internal_config": {
-        "engine_args": {
-            "tensor_parallel_size": NUM_GPUS,  # Multi-GPU tensor parallelism
-            "gpu_memory_utilization": 0.75,  # Conservative for stability
-        },
-        "torchtune_args": {
-            "model": "qwen2_5_14b_instruct",  # TorchTune model identifier
-            "model_type": "QWEN2",  # Model architecture type
-            "async_weight_syncing": True,  # Async weight sync for efficiency
-        },
-        "peft_args": {
-            "r": TRAINING_PARAMS["lora_rank"],
-            "lora_alpha": TRAINING_PARAMS["lora_alpha"],
-            "lora_dropout": TRAINING_PARAMS["lora_dropout"],
-        },
-        "trainer_args": {
-            "learning_rate": TRAINING_PARAMS["learning_rate"],
-            "gradient_accumulation_steps": TRAINING_PARAMS["gradient_accumulation_steps"],
-        },
-    },
 
     # Training (larger batches for multi-GPU)
     **{**TRAINING_PARAMS, "rollouts_per_group": 8},  # Increase for multi-GPU
@@ -67,6 +50,26 @@ MULTI_GPU_CONFIG = {
 }
 
 
+def get_internal_config() -> art.dev.InternalModelConfig:
+    """
+    Get ART internal configuration for multi-GPU with TorchTune backend.
+    TorchTune is required for tensor parallelism > 1 with 14B+ models.
+
+    Reference: ART/dev/tau-bench/run_training.py (model "016")
+    """
+    return art.dev.InternalModelConfig(
+        engine_args=art.dev.EngineArgs(
+            tensor_parallel_size=NUM_GPUS,
+            gpu_memory_utilization=0.75,
+        ),
+        torchtune_args=art.dev.TorchtuneArgs(
+            model="qwen2_5_14b_instruct",
+            model_type="QWEN2",
+            async_weight_syncing=True,
+        ),
+    )
+
+
 def get_backend():
     """Get local backend for multi-GPU"""
     from art.local.backend import LocalBackend
@@ -74,12 +77,14 @@ def get_backend():
 
 
 def get_model_config():
-    """Get model configuration for TrainableModel"""
+    """
+    Get model configuration for TrainableModel.
+    Note: _internal_config is set AFTER model creation, not in constructor.
+    """
     return {
         "name": MULTI_GPU_CONFIG["model_name"],
         "project": WANDB_CONFIG["project"],
         "base_model": MULTI_GPU_CONFIG["base_model"],
-        "_internal_config": MULTI_GPU_CONFIG["_internal_config"],
     }
 
 
