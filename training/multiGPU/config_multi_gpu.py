@@ -32,9 +32,9 @@ MULTI_GPU_CONFIG = {
             "enable_sleep_mode": False,  # Disable for multi-GPU
         },
         "init_args": {
-            "gpu_memory_utilization": 0.80,  # Conservative for L40S (46GB VRAM)
+            "gpu_memory_utilization": 0.85,  # Can be higher with full model across 8 GPUs
             "max_seq_length": 8192,
-            "load_in_4bit": True,  # Essential for L40S memory constraints
+            "load_in_4bit": False,  # Full precision for tensor parallelism
         },
         "peft_args": {
             "r": TRAINING_PARAMS["lora_rank"],
@@ -61,7 +61,7 @@ MULTI_GPU_CONFIG = {
 
     # GPU Settings (for helper functions)
     "tensor_parallel_size": NUM_GPUS,
-    "gpu_memory_utilization": 0.80,
+    "gpu_memory_utilization": 0.85,
     "max_model_len": 8192,
 }
 
