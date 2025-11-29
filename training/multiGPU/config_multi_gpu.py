@@ -1,6 +1,6 @@
 """
-Multi-GPU (Multiple H100s) Training Configuration
-For training on 2-8 H100 GPUs with tensor parallelism
+Multi-GPU Training Configuration
+For training on 8x L40S GPUs with tensor parallelism
 """
 
 import sys
@@ -15,15 +15,15 @@ from config.training_config import BASE_MODEL, TRAINING_PARAMS, DATA_PATHS, WAND
 from config.paths import CHECKPOINTS_DIR
 
 # ============================================================
-# MULTI-GPU CONFIGURATION
+# MULTI-GPU CONFIGURATION (8x L40S)
 # ============================================================
 
-NUM_GPUS = 2  # Change to 4 or 8 for more GPUs
+NUM_GPUS = 8  # 8x NVIDIA L40S (46GB VRAM each)
 
 MULTI_GPU_CONFIG = {
     # Model
     "base_model": BASE_MODEL,
-    "model_name": f"legal-agent-h100-{NUM_GPUS}gpu",
+    "model_name": f"legal-agent-l40s-{NUM_GPUS}gpu",
 
     # ART internal configuration for multi-GPU
     "_internal_config": {
@@ -32,9 +32,9 @@ MULTI_GPU_CONFIG = {
             "enable_sleep_mode": False,  # Disable for multi-GPU
         },
         "init_args": {
-            "gpu_memory_utilization": 0.85,
+            "gpu_memory_utilization": 0.80,  # Conservative for L40S (46GB VRAM)
             "max_seq_length": 8192,
-            "load_in_4bit": True,  # Unsloth 4-bit optimization
+            "load_in_4bit": True,  # Essential for L40S memory constraints
         },
         "peft_args": {
             "r": TRAINING_PARAMS["lora_rank"],
@@ -61,7 +61,7 @@ MULTI_GPU_CONFIG = {
 
     # GPU Settings (for helper functions)
     "tensor_parallel_size": NUM_GPUS,
-    "gpu_memory_utilization": 0.85,
+    "gpu_memory_utilization": 0.80,
     "max_model_len": 8192,
 }
 
@@ -82,8 +82,8 @@ def get_model_config():
     }
 
 
-def optimize_for_multi_h100():
-    """Enable multi-GPU H100 optimizations"""
+def optimize_for_gpus():
+    """Enable multi-GPU L40S optimizations"""
     os.environ["NVIDIA_TF32_OVERRIDE"] = "1"
     os.environ["ATTN_IMPLEMENTATION"] = "flash_attention_2"
     os.environ["CUDA_LAUNCH_BLOCKING"] = "0"
@@ -102,7 +102,7 @@ def optimize_for_multi_h100():
         torch.backends.cudnn.allow_tf32 = True
         torch.backends.cudnn.benchmark = True
 
-    print(f"✅ Multi-GPU ({NUM_GPUS}x H100) optimizations enabled")
+    print(f"✅ Multi-GPU ({NUM_GPUS}x L40S) optimizations enabled")
     print(f"   - GPUs: {gpu_ids_str}")
     print(f"   - Tensor Parallel Size: {MULTI_GPU_CONFIG['tensor_parallel_size']}")
     print(f"   - Memory Util: {MULTI_GPU_CONFIG['gpu_memory_utilization']}")
@@ -118,7 +118,7 @@ def optimize_for_multi_h100():
 def print_config():
     """Print multi-GPU configuration"""
     print("=" * 60)
-    print(f"🔧 MULTI-GPU ({NUM_GPUS}x H100) CONFIGURATION")
+    print(f"🔧 MULTI-GPU ({NUM_GPUS}x L40S) CONFIGURATION")
     print("=" * 60)
     print(f"Backend: Local (Multi-GPU)")
     print(f"Model: {MULTI_GPU_CONFIG['base_model']}")
