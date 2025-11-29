@@ -21,18 +21,19 @@ from config.paths import CHECKPOINTS_DIR
 import art.dev
 
 # ============================================================
-# MULTI-GPU CONFIGURATION (8x L40S)
+# MULTI-GPU CONFIGURATION (4x L40S)
+# Reduced from 8 to 4 GPUs to test stability
 # ============================================================
 
-NUM_GPUS = 8  # 8x NVIDIA L40S (46GB VRAM each)
+NUM_GPUS = 4  # 4x NVIDIA L40S (46GB VRAM each)
 
 MULTI_GPU_CONFIG = {
     # Model
     "base_model": BASE_MODEL,
     "model_name": f"legal-agent-l40s-{NUM_GPUS}gpu",
 
-    # Training (larger batches for multi-GPU)
-    **{**TRAINING_PARAMS, "rollouts_per_group": 8},  # Increase for multi-GPU
+    # Training (reduced for stability)
+    **{**TRAINING_PARAMS, "rollouts_per_group": 4},  # Reduced for 4-GPU setup
 
     # Data
     **DATA_PATHS,

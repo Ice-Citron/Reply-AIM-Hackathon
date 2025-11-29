@@ -389,7 +389,10 @@ async def main():
 
         # Calculate and print metrics (ART logs to W&B internally)
         all_rewards = [t.reward for g in judged_groups for t in g.trajectories]
-        avg_reward = sum(all_rewards) / len(all_rewards) if all_rewards else 0.0
+        if not all_rewards:
+            print("  WARNING: No successful rollouts in this step!")
+            continue
+        avg_reward = sum(all_rewards) / len(all_rewards)
         print(f"  Rewards: avg={avg_reward:.2f}, max={max(all_rewards):.2f}, min={min(all_rewards):.2f}")
 
         # Train with learning rate from config
