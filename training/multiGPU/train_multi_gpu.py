@@ -320,14 +320,18 @@ async def main():
     print(f"Loaded {len(training_scenarios)} scenarios\n")
 
     # Initialize W&B FIRST (before ART model registration)
-    # This ensures we control the run name before ART's internal init
+    # CRITICAL: ART internally calls wandb.init(id=model.name, resume="allow")
+    # We must use the SAME id so all metrics go to the same run
+    model_name = config_multi_gpu.MULTI_GPU_CONFIG["model_name"]
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
+        id=model_name,         # Must match what ART uses internally
+        name=model_name,       # Display name in W&B UI
+        resume="allow",        # Allow resuming existing runs (matches ART behavior)
         config=config_multi_gpu.MULTI_GPU_CONFIG,
         tags=["multi-gpu", "l40s", "qwen2.5-14b", "legal-agent"],
         notes=f"Multi-GPU training on {config_multi_gpu.NUM_GPUS}x L40S GPUs",
-        reinit=False,  # Prevent ART from creating a new run
     )
     print(f"W&B Run: {run.name}")
     print(f"W&B URL: {run.url}\n")

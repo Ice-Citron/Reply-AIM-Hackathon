@@ -416,9 +416,15 @@ async def main():
     print(f"📊 Split: {len(training_scenarios)} train, {len(val_scenarios)} validation\n")
 
     # Initialize W&B FIRST (before model registration to control run name)
+    # CRITICAL: ART internally calls wandb.init(id=model.name, resume="allow")
+    # We must use the SAME id so all metrics go to the same run
+    model_name = config_single_gpu.SINGLE_GPU_CONFIG["model_name"]
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
+        id=model_name,         # Must match what ART uses internally
+        name=model_name,       # Display name in W&B UI
+        resume="allow",        # Allow resuming existing runs (matches ART behavior)
         config={
             **config_single_gpu.SINGLE_GPU_CONFIG,
             "dataset_size": len(all_scenarios),
@@ -427,7 +433,6 @@ async def main():
         },
         tags=["single-gpu", "h100", "qwen2.5-14b", "legal-agent", f"train-{len(training_scenarios)}"],
         notes=f"Single GPU training on H100 with {len(training_scenarios)} train / {len(val_scenarios)} val samples",
-        reinit=False,
     )
     print(f"W&B Run: {run.name}")
     print(f"W&B URL: {run.url}\n")
