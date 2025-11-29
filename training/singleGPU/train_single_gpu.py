@@ -19,8 +19,9 @@ import wandb
 
 # Import configuration
 from config.paths import TRAINING_DATA_FILE, LEGAL_XML_FILE, CHROMA_DB_PATH
-from config.training_config import BASE_MODEL, MAX_TURNS, WANDB_CONFIG
+from config.training_config import BASE_MODEL, MAX_TURNS, WANDB_CONFIG, TRAINING_PARAMS
 import config_single_gpu
+import random
 
 # Import ART
 import art
@@ -322,6 +323,56 @@ Return JSON: {{"scores": [{{"base_score": X, "reasoning": "..."}}, ...]}}"""
 
 
 # ============================================================
+# VALIDATION EVALUATION
+# ============================================================
+
+async def evaluate_validation(model: art.Model, val_scenarios: List[LegalScenario], step: int) -> dict:
+    """Run validation evaluation on held-out scenarios"""
+    if not val_scenarios:
+        return {}
+
+    print(f"\n📋 Running validation on {len(val_scenarios)} scenarios...")
+
+    # Run single rollout per validation scenario (no training, just eval)
+    val_groups = []
+    for scenario in val_scenarios:
+        try:
+            traj = await rollout(model, LegalScenarioStep(step=step, scenario=scenario))
+            val_groups.append(art.TrajectoryGroup([traj]))
+        except Exception as e:
+            print(f"  Val rollout error for {scenario.id}: {e}")
+
+    if not val_groups:
+        return {}
+
+    # Judge validation trajectories
+    judged_val = []
+    for g in val_groups:
+        try:
+            judged_val.append(await gemini_judge(g))
+        except Exception as e:
+            print(f"  Val judge error: {e}")
+
+    # Calculate validation metrics
+    val_rewards = [t.reward for g in judged_val for t in g.trajectories]
+
+    if not val_rewards:
+        return {}
+
+    val_metrics = {
+        "val/avg_reward": sum(val_rewards) / len(val_rewards),
+        "val/max_reward": max(val_rewards),
+        "val/min_reward": min(val_rewards),
+        "val/num_samples": len(val_rewards),
+    }
+
+    print(f"  Val rewards: avg={val_metrics['val/avg_reward']:.2f}, "
+          f"max={val_metrics['val/max_reward']:.2f}, min={val_metrics['val/min_reward']:.2f}")
+
+    return val_metrics
+
+
+# ============================================================
 # MAIN TRAINING LOOP
 # ============================================================
 
@@ -341,25 +392,41 @@ async def main():
     with open(TRAINING_DATA_FILE, 'r') as f:
         data = json.load(f)
 
-    training_scenarios = []
+    all_scenarios = []
     for item in data.get("items", []):
         for row in item.get("rows", []):
-            training_scenarios.append(LegalScenario(
+            all_scenarios.append(LegalScenario(
                 id=str(row["row_index"]),
                 question=row["question"],
                 gold_answer=row.get("model_answer", ""),
                 gold_part_ids=row.get("sources", [])
             ))
 
-    print(f"✅ Loaded {len(training_scenarios)} scenarios\n")
+    print(f"✅ Loaded {len(all_scenarios)} total scenarios")
+
+    # Train/validation split (20% validation)
+    val_ratio = TRAINING_PARAMS.get("val_set_ratio", 0.2)
+    random.seed(42)  # Reproducible split
+    random.shuffle(all_scenarios)
+
+    val_size = int(len(all_scenarios) * val_ratio)
+    val_scenarios = all_scenarios[:val_size]
+    training_scenarios = all_scenarios[val_size:]
+
+    print(f"📊 Split: {len(training_scenarios)} train, {len(val_scenarios)} validation\n")
 
     # Initialize W&B FIRST (before model registration to control run name)
     wandb.login(key=os.environ["WANDB_API_KEY"])
     run = wandb.init(
         project=WANDB_CONFIG["project"],
-        config=config_single_gpu.SINGLE_GPU_CONFIG,
-        tags=["single-gpu", "h100", "qwen2.5-14b", "legal-agent"],
-        notes="Single GPU training on H100",
+        config={
+            **config_single_gpu.SINGLE_GPU_CONFIG,
+            "dataset_size": len(all_scenarios),
+            "train_size": len(training_scenarios),
+            "val_size": len(val_scenarios),
+        },
+        tags=["single-gpu", "h100", "qwen2.5-14b", "legal-agent", f"train-{len(training_scenarios)}"],
+        notes=f"Single GPU training on H100 with {len(training_scenarios)} train / {len(val_scenarios)} val samples",
         reinit=False,
     )
     print(f"W&B Run: {run.name}")
@@ -437,6 +504,13 @@ async def main():
         await model.delete_checkpoints()
         await model.train(judged_groups, config=train_config)
 
+        # Run validation every 5 steps
+        EVAL_EVERY_N_STEPS = 5
+        if (step_count + 1) % EVAL_EVERY_N_STEPS == 0:
+            val_metrics = await evaluate_validation(model, val_scenarios, step_count)
+            if val_metrics:
+                wandb.log(val_metrics, step=step_count)
+
         # Push to HuggingFace every N steps
         if (step_count + 1) % HF_PUSH_EVERY_N_STEPS == 0:
             # Find the latest checkpoint
@@ -452,6 +526,12 @@ async def main():
         step_count += 1
         if step_count >= cfg["max_steps"]:
             break
+
+    # Final validation evaluation
+    print("\n📋 Final validation evaluation...")
+    final_val_metrics = await evaluate_validation(model, val_scenarios, step_count)
+    if final_val_metrics:
+        wandb.log({f"final_{k}": v for k, v in final_val_metrics.items()}, step=step_count)
 
     # Push final checkpoint to HuggingFace
     print("Pushing final checkpoint to HuggingFace...")
