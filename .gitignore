@@ -1,3 +1,9 @@
+# MacOS related hidden files
+.DS_Store
+
+# API keys related hidden files
+webapp/
+
 *.art/
 *wandb/
 
