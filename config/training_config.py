@@ -26,8 +26,8 @@ TRAINING_PARAMS = {
 
     # Learning
     "learning_rate": 1e-5,
-    "lora_rank": 16,
-    "lora_alpha": 32,
+    "lora_rank": 8,
+    "lora_alpha": 16,
     "lora_dropout": 0.05,
     "gradient_accumulation_steps": 4,
 
